@@ -6,6 +6,7 @@ use DateTime;
 use SouthPointe\DataDump\Decorators\AnsiDecorator;
 use SouthPointe\DataDump\Dumper;
 use SouthPointe\DataDump\Formatter;
+use Tests\SouthPointe\DataDump\Samples\CircularClass;
 use Tests\SouthPointe\DataDump\Samples\SimpleBackedEnum;
 use Tests\SouthPointe\DataDump\Samples\SimpleClass;
 use Tests\SouthPointe\DataDump\Samples\SimpleEnum;
@@ -17,6 +18,10 @@ class DumpTest extends TestCase
 {
     public function testSomething(): void
     {
+        $ref = new CircularClass();
+        $ref->ref = new CircularClass();
+        $ref->ref->ref = $ref;
+
         $vars = [
             null,
             -1,
@@ -39,6 +44,7 @@ class DumpTest extends TestCase
             strstr(...),
             SimpleEnum::Option1,
             SimpleBackedEnum::Option2,
+            $ref,
         ];
 
         $decorator = new AnsiDecorator();

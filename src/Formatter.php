@@ -56,9 +56,10 @@ class Formatter
     /**
      * @param mixed $var
      * @param int $depth
+     * @param array<int, object> $objectRegistrar
      * @return string
      */
-    public function format(mixed $var, int $depth): string
+    public function format(mixed $var, int $depth, array &$objectRegistrar = []): string
     {
         return match (true) {
             is_null($var) => $this->formatNull(),
@@ -66,8 +67,8 @@ class Formatter
             is_bool($var) => $this->formatBool($var),
             is_int($var) => $this->formatInt($var),
             is_float($var) => $this->formatFloat($var),
-            is_object($var) => $this->formatObject($var, $depth),
-            is_array($var) => $this->formatArray($var, $depth),
+            is_object($var) => $this->formatObject($var, $depth, $objectRegistrar),
+            is_array($var) => $this->formatArray($var, $depth, $objectRegistrar),
             is_resource($var) => $this->formatResource($var, $depth),
             default => "Unreachable case",
         };
@@ -126,9 +127,10 @@ class Formatter
     /**
      * @param array<mixed> $var
      * @param int $depth
+     * @param array<int, object> $objectRegistrar
      * @return string
      */
-    protected function formatArray(array $var, int $depth): string
+    protected function formatArray(array $var, int $depth, array &$objectRegistrar): string
     {
         $start = $this->decorator->type('array(' . count($var) . ')') . ' [';
         $end = ']';
@@ -141,11 +143,11 @@ class Formatter
             $start,
             $end,
             $depth,
-            function(int $depth) use ($var) {
+            function(int $depth) use ($var, $objectRegistrar) {
                 $string = '';
                 foreach ($var as $key => $val) {
                     $formattedKey = $this->decorator->parameterKey($key);
-                    $formattedVal = $this->format($val, $depth);
+                    $formattedVal = $this->format($val, $depth, $objectRegistrar);
                     $arrow = $this->decorator->parameterDelimiter('=>');
                     $string .= $this->decorator->line("{$formattedKey} {$arrow} {$formattedVal},", $depth);
                 }
@@ -157,12 +159,13 @@ class Formatter
     /**
      * @param object $var
      * @param int $depth
+     * @param array<int, object> $objectRegistrar
      * @return string
      */
-    protected function formatObject(object $var, int $depth): string
+    protected function formatObject(object $var, int $depth, array &$objectRegistrar): string
     {
         $id = spl_object_id($var);
-        return $this->getCaster($var)->cast($var, $id, $depth);
+        return $this->getCaster($var)->cast($var, $id, $depth, $objectRegistrar);
     }
 
     /**
