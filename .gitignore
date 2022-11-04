@@ -1,0 +1,10 @@
+# Framework
+composer.lock
+coverage
+vendor
+
+# OS related files
+.DS_Store
+
+# PHPUnit
+.phpunit.result.cache

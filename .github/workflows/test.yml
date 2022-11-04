@@ -1,0 +1,23 @@
+name: test
+on: [push, pull_request]
+jobs:
+  phpunit:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: php-actions/composer@v6
+    - uses: php-actions/phpunit@v3
+      env:
+        XDEBUG_MODE: coverage
+      with:
+        bootstrap: vendor/autoload.php
+        configuration: phpunit.xml
+        php_version: "8.1"
+        php_extensions: xdebug
+        args: --coverage-clover ./coverage.xml
+    - uses: codecov/codecov-action@v3
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: ./coverage.xml
+        fail_ci_if_error: true
+        verbose: true

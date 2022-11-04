@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<phpunit bootstrap="vendor/autoload.php"
+         executionOrder="depends,defects"
+         verbose="true"
+         colors="true">
+  <coverage>
+    <include>
+      <directory suffix=".php">./src</directory>
+    </include>
+  </coverage>
+  <testsuites>
+    <testsuite name="default">
+      <directory>./tests</directory>
+    </testsuite>
+  </testsuites>
+</phpunit>
