@@ -14,6 +14,7 @@ use SouthPointe\DataDump\Decorators\Decorator;
 use UnitEnum;
 use function array_key_exists;
 use function count;
+use function get_debug_type;
 use function get_resource_id;
 use function get_resource_type;
 use function is_a;
@@ -71,7 +72,7 @@ class Formatter
             is_object($var) => $this->formatObject($var, $depth, $objectIds),
             is_array($var) => $this->formatArray($var, $depth, $objectIds),
             is_resource($var) => $this->formatResource($var, $depth),
-            default => "Unreachable case",
+            default => $this->formatUnknown($var, $depth),
         };
     }
 
@@ -183,11 +184,22 @@ class Formatter
     {
         $deco = $this->decorator;
 
-        $type = $deco->type(get_resource_type($var));
-        $id = $deco->comment('@' . get_resource_id($var));
+        $type = get_resource_type($var);
+        $id = get_resource_id($var);
+
+        // Will get Unknown if resource is closed.
+        if ($type === 'Unknown') {
+            return
+                $deco->type('resource (closed)') . ' ' .
+                $deco->comment("@{$id}");
+        }
+
+        $summary =
+            $deco->type($type) . ' ' .
+            $deco->comment("@{$id}");
 
         return $this->block(
-            "{$type} {$id} {",
+            "{$summary} {",
             "}",
             $depth,
             function(int $depth) use ($deco, $var) {
@@ -201,6 +213,22 @@ class Formatter
                 return $string;
             },
         );
+    }
+
+    /**
+     * @param mixed $var
+     * @param int $depth
+     * @return string
+     */
+    protected function formatUnknown(mixed $var, int $depth): string
+    {
+        $type = get_debug_type($var);
+
+        if ($type === 'resource (closed)') {
+            return $this->formatResource($var, $depth);
+        }
+
+        return $this->decorator->type($type);
     }
 
     /**

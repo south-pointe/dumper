@@ -10,6 +10,9 @@ use Tests\SouthPointe\DataDump\Samples\CircularClass;
 use Tests\SouthPointe\DataDump\Samples\SimpleBackedEnum;
 use Tests\SouthPointe\DataDump\Samples\SimpleClass;
 use Tests\SouthPointe\DataDump\Samples\SimpleEnum;
+use function assert;
+use function fclose;
+use function tmpfile;
 use const INF;
 use const NAN;
 use const STDIN;
@@ -23,6 +26,10 @@ class DumpTest extends TestCase
         $circular->next->next = $circular;
 
         $ref = 'my ref';
+
+        $closedResource = tmpfile();
+        assert($closedResource !== false);
+        fclose($closedResource);
 
         $vars = [
             null,
@@ -38,6 +45,7 @@ class DumpTest extends TestCase
             "text",
             "あいう",
             STDIN,
+            $closedResource,
             new DateTime(),
 //            new Exception(),
             new SimpleClass(),
