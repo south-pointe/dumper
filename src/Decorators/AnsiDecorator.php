@@ -71,7 +71,7 @@ class AnsiDecorator implements Decorator
      */
     public function parameterDelimiter(string $delimiter): string
     {
-        return $this->withColor($delimiter, Color::Gray);
+        return $this->withColor($delimiter, Color::Gray30);
     }
 
     /**
