@@ -224,6 +224,11 @@ class Formatter
     {
         $type = get_debug_type($var);
 
+        /**
+         * HACK: Function is_resource(...) cannot detect closed resources, so we have to
+         * detect it using get_debug_type(...) which can detect them.
+         * @see https://www.php.net/manual/en/function.is-resource.php#refsect1-function.is-resource-notes
+         */
         if ($type === 'resource (closed)') {
             return $this->formatResource($var, $depth);
         }
