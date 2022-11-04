@@ -12,6 +12,8 @@ interface Decorator
 
     public function eol(): string;
 
+    public function refSymbol(string $string): string;
+
     public function type(string $type): string;
 
     public function scalar(mixed $value): string;

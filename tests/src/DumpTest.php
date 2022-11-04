@@ -18,9 +18,11 @@ class DumpTest extends TestCase
 {
     public function testSomething(): void
     {
-        $ref = new CircularClass();
-        $ref->ref = new CircularClass();
-        $ref->ref->ref = $ref;
+        $circular = new CircularClass();
+        $circular->next = new CircularClass();
+        $circular->next->next = $circular;
+
+        $ref = 'my ref';
 
         $vars = [
             null,
@@ -44,7 +46,8 @@ class DumpTest extends TestCase
             strstr(...),
             SimpleEnum::Option1,
             SimpleBackedEnum::Option2,
-            $ref,
+            $circular,
+            &$ref,
         ];
 
         $decorator = new AnsiDecorator();

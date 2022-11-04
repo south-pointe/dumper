@@ -18,8 +18,8 @@ abstract class Caster
      * @param object $var
      * @param int $id
      * @param int $depth
-     * @param array<int, object> $objectRegistrar
+     * @param array<int, bool> $objectIds
      * @return string
      */
-    abstract public function cast(object $var, int $id, int $depth, array &$objectRegistrar): string;
+    abstract public function cast(object $var, int $id, int $depth, array $objectIds): string;
 }

@@ -4,18 +4,20 @@ namespace SouthPointe\DataDump\Casters;
 
 use Closure;
 use ReflectionFunction;
+use function assert;
 
 class ClosureCaster extends Caster
 {
     /**
      * @param Closure $var
-     * @param int $id
-     * @param int $depth
-     * @param array<int, object> $objectRegistrar
-     * @return string
+     * @inheritDoc
      */
-    public function cast(object $var, int $id, int $depth, array &$objectRegistrar): string
+    public function cast(object $var, int $id, int $depth, array $objectIds): string
     {
+        assert($var instanceof Closure);
+
+        $deco = $this->decorator;
+
         $ref = new ReflectionFunction($var);
 
         if ($file = $ref->getFileName()) {
@@ -25,18 +27,18 @@ class ClosureCaster extends Caster
                 ? "{$startLine}-{$endLine}"
                 : $startLine;
             return
-                $this->decorator->type($var::class . "@{$file}:{$range}") . ' ' .
-                $this->decorator->comment("#{$id}");
+                $deco->type($var::class . "@{$file}:{$range}") . ' ' .
+                $deco->comment("#{$id}");
         }
 
         if ($class = $ref->getClosureScopeClass()) {
             return
-                $this->decorator->type("{$class->getName()}::{$ref->getName()}(...)") . ' ' .
-                $this->decorator->comment("#{$id}");
+                $deco->type("{$class->getName()}::{$ref->getName()}(...)") . ' ' .
+                $deco->comment("#{$id}");
         }
 
         return
-            $this->decorator->type("{$ref->getName()}(...)") . ' ' .
-            $this->decorator->comment("#{$id}");
+            $deco->type("{$ref->getName()}(...)") . ' ' .
+            $deco->comment("#{$id}");
     }
 }

@@ -4,6 +4,7 @@ namespace SouthPointe\DataDump;
 
 use Closure;
 use DateTime;
+use ReflectionReference;
 use SouthPointe\DataDump\Casters\Caster;
 use SouthPointe\DataDump\Casters\ClosureCaster;
 use SouthPointe\DataDump\Casters\DateTimeCaster;
@@ -56,10 +57,10 @@ class Formatter
     /**
      * @param mixed $var
      * @param int $depth
-     * @param array<int, object> $objectRegistrar
+     * @param array<int, bool> $objectIds
      * @return string
      */
-    public function format(mixed $var, int $depth, array &$objectRegistrar = []): string
+    public function format(mixed $var, int $depth, array $objectIds = []): string
     {
         return match (true) {
             is_null($var) => $this->formatNull(),
@@ -67,8 +68,8 @@ class Formatter
             is_bool($var) => $this->formatBool($var),
             is_int($var) => $this->formatInt($var),
             is_float($var) => $this->formatFloat($var),
-            is_object($var) => $this->formatObject($var, $depth, $objectRegistrar),
-            is_array($var) => $this->formatArray($var, $depth, $objectRegistrar),
+            is_object($var) => $this->formatObject($var, $depth, $objectIds),
+            is_array($var) => $this->formatArray($var, $depth, $objectIds),
             is_resource($var) => $this->formatResource($var, $depth),
             default => "Unreachable case",
         };
@@ -115,24 +116,28 @@ class Formatter
      */
     protected function formatFloat(float $var): string
     {
+        $deco = $this->decorator;
+
         $string = (string) $var;
 
         if (str_contains($string, '.') || is_nan($var) || is_infinite($var)) {
-            return $this->decorator->scalar($string);
+            return $deco->scalar($string);
         }
 
-        return $this->decorator->scalar($string . '.0');
+        return $deco->scalar($string . '.0');
     }
 
     /**
      * @param array<mixed> $var
      * @param int $depth
-     * @param array<int, object> $objectRegistrar
+     * @param array<int, bool> $objectIds
      * @return string
      */
-    protected function formatArray(array $var, int $depth, array &$objectRegistrar): string
+    protected function formatArray(array $var, int $depth, array $objectIds): string
     {
-        $start = $this->decorator->type('array(' . count($var) . ')') . ' [';
+        $deco = $this->decorator;
+
+        $start = $deco->type('array(' . count($var) . ')') . ' [';
         $end = ']';
 
         if (count($var) === 0) {
@@ -143,13 +148,14 @@ class Formatter
             $start,
             $end,
             $depth,
-            function(int $depth) use ($var, $objectRegistrar) {
+            function(int $depth) use ($deco, $var, $objectIds) {
                 $string = '';
                 foreach ($var as $key => $val) {
-                    $formattedKey = $this->decorator->parameterKey($key);
-                    $formattedVal = $this->format($val, $depth, $objectRegistrar);
-                    $arrow = $this->decorator->parameterDelimiter('=>');
-                    $string .= $this->decorator->line("{$formattedKey} {$arrow} {$formattedVal},", $depth);
+                    $decoKey = $deco->parameterKey($key);
+                    $decoVal = $this->format($val, $depth, $objectIds);
+                    $ref = $deco->refSymbol(ReflectionReference::fromArrayElement($var, $key) ? '&' : '');
+                    $arrow = $deco->parameterDelimiter('=>');
+                    $string .= $deco->line("{$decoKey} {$arrow} {$ref}{$decoVal},", $depth);
                 }
                 return $string;
             },
@@ -159,13 +165,13 @@ class Formatter
     /**
      * @param object $var
      * @param int $depth
-     * @param array<int, object> $objectRegistrar
+     * @param array<int, bool> $objectIds
      * @return string
      */
-    protected function formatObject(object $var, int $depth, array &$objectRegistrar): string
+    protected function formatObject(object $var, int $depth, array $objectIds): string
     {
         $id = spl_object_id($var);
-        return $this->getCaster($var)->cast($var, $id, $depth, $objectRegistrar);
+        return $this->getCaster($var)->cast($var, $id, $depth, $objectIds);
     }
 
     /**
@@ -175,20 +181,22 @@ class Formatter
      */
     protected function formatResource(mixed $var, int $depth): string
     {
-        $type = $this->decorator->type(get_resource_type($var));
-        $id = $this->decorator->comment('@' . get_resource_id($var));
+        $deco = $this->decorator;
+
+        $type = $deco->type(get_resource_type($var));
+        $id = $deco->comment('@' . get_resource_id($var));
 
         return $this->block(
             "{$type} {$id} {",
             "}",
             $depth,
-            function(int $depth) use ($var) {
+            function(int $depth) use ($deco, $var) {
                 $string = '';
                 foreach (stream_get_meta_data($var) as $key => $val) {
-                    $formattedKey = $this->decorator->parameterKey($key);
-                    $formattedVal = $this->format($val, $depth);
-                    $arrow = $this->decorator->parameterDelimiter(':');
-                    $string .= $this->decorator->line("{$formattedKey}{$arrow} {$formattedVal},", $depth);
+                    $decoKey = $deco->parameterKey($key);
+                    $decoVal = $this->format($val, $depth);
+                    $arrow = $deco->parameterDelimiter(':');
+                    $string .= $deco->line("{$decoKey}{$arrow} {$decoVal},", $depth);
                 }
                 return $string;
             },
@@ -204,18 +212,20 @@ class Formatter
      */
     public function block(string $start, string $end, int $depth, Closure $block): string
     {
+        $deco = $this->decorator;
+
         $string = ($depth === 0)
-            ? $this->decorator->line($start, $depth)
-            : $start . $this->decorator->eol();
+            ? $deco->line($start, $depth)
+            : $start . $deco->eol();
 
         ++$depth;
         $string .= $block($depth);
         --$depth;
 
-        $string .= $this->decorator->indent($end, $depth);
+        $string .= $deco->indent($end, $depth);
 
         if ($depth === 0) {
-            $string .= $this->decorator->eol();
+            $string .= $deco->eol();
         }
 
         return $string;

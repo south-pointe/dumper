@@ -8,16 +8,15 @@ class DateTimeCaster extends Caster
 {
     /**
      * @param DateTime $var
-     * @param int $id
-     * @param int $depth
-     * @param array<int, object> $objectRegistrar
-     * @return string
+     * @inheritDoc
      */
-    public function cast(object $var, int $id, int $depth, array &$objectRegistrar): string
+    public function cast(object $var, int $id, int $depth, array $objectIds): string
     {
+        $deco = $this->decorator;
+
         return
-            $this->decorator->type($var::class) . ' ' .
-            $this->decorator->comment("#$id") . ' ' .
-            $this->decorator->scalar($var->format('Y-m-d H:i:s.u T (P)'));
+            $deco->type($var::class) . ' ' .
+            $deco->comment("#$id") . ' ' .
+            $deco->scalar($var->format('Y-m-d H:i:s.u T (P)'));
     }
 }

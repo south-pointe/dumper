@@ -3,8 +3,6 @@
 namespace SouthPointe\DataDump;
 
 use SouthPointe\DataDump\Decorators\Decorator;
-use function debug_backtrace;
-use const DEBUG_BACKTRACE_IGNORE_ARGS;
 
 class Dumper
 {
@@ -24,12 +22,4 @@ class Dumper
         $string = $this->formatter->format($var, 0);
         $this->decorator->output($string);
     }
-
-    protected function getCallee(): string
-    {
-        $callStack = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
-
-        return $this->decorator->comment($callee);
-    }
-
 }

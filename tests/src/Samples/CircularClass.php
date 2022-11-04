@@ -4,5 +4,5 @@ namespace Tests\SouthPointe\DataDump\Samples;
 
 class CircularClass
 {
-    public self $ref;
+    public self $next;
 }

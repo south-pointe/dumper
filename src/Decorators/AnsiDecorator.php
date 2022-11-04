@@ -8,16 +8,32 @@ use const PHP_EOL;
 
 class AnsiDecorator implements Decorator
 {
+    /**
+     * @param string $indentation
+     */
     public function __construct(
         protected string $indentation = '  ',
     )
     {
     }
 
+    /**
+     * @param string $string
+     * @return void
+     */
     public function output(string $string): void
     {
         $eol = $this->eol();
         echo "{$eol}{$string}{$eol}";
+    }
+
+    /**
+     * @param string $string
+     * @return string
+     */
+    public function refSymbol(string $string): string
+    {
+        return $string;
     }
 
     /**
@@ -29,6 +45,10 @@ class AnsiDecorator implements Decorator
         return $this->withColor($type, Color::DarkCyan);
     }
 
+    /**
+     * @param mixed $value
+     * @return string
+     */
     public function scalar(mixed $value): string
     {
         return $this->withColor($value, Color::LightGoldenrod3);

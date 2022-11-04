@@ -8,15 +8,14 @@ class EnumCaster extends Caster
 {
     /**
      * @param UnitEnum $var
-     * @param int $id
-     * @param int $depth
-     * @param array<int, object> $objectRegistrar
-     * @return string
+     * @inheritDoc
      */
-    public function cast(object $var, int $id, int $depth, array &$objectRegistrar): string
+    public function cast(object $var, int $id, int $depth, array $objectIds): string
     {
+        $deco = $this->decorator;
+
         return
-            $this->decorator->type($var::class . "::{$var->name}") . ' ' .
-            $this->decorator->comment("#{$id}");
+            $deco->type($var::class . "::{$var->name}") . ' ' .
+            $deco->comment("#{$id}");
     }
 }
