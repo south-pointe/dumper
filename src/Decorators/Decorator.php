@@ -14,13 +14,17 @@ interface Decorator
 
     public function refSymbol(string $string): string;
 
-    public function type(string $type): string;
+    public function classType(string $type): string;
+
+    public function resourceType(string $type): string;
 
     public function scalar(mixed $value): string;
 
     public function parameterKey(int|string $key): string;
 
     public function parameterDelimiter(string $delimiter): string;
+
+    public function arrayKey(int|string $key): string;
 
     public function comment(string $comment): string;
 }

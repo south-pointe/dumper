@@ -4,6 +4,7 @@ namespace SouthPointe\DataDump\Decorators;
 
 use SouthPointe\Ansi\Ansi;
 use SouthPointe\Ansi\Codes\Color;
+use function is_int;
 use const PHP_EOL;
 
 class AnsiDecorator implements Decorator
@@ -40,7 +41,16 @@ class AnsiDecorator implements Decorator
      * @param string $type
      * @return string
      */
-    public function type(string $type): string
+    public function classType(string $type): string
+    {
+        return $this->withColor($type, Color::DarkCyan);
+    }
+
+    /**
+     * @param string $type
+     * @return string
+     */
+    public function resourceType(string $type): string
     {
         return $this->withColor($type, Color::DarkCyan);
     }
@@ -72,6 +82,15 @@ class AnsiDecorator implements Decorator
     public function parameterDelimiter(string $delimiter): string
     {
         return $this->withColor($delimiter, Color::Gray30);
+    }
+
+    /**
+     * @param int|string $key
+     * @return string
+     */
+    public function arrayKey(int|string $key): string
+    {
+        return $this->withColor((string) $key, Color::Violet);
     }
 
     /**

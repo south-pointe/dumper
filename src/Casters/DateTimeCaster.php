@@ -15,7 +15,7 @@ class DateTimeCaster extends Caster
         $deco = $this->decorator;
 
         return
-            $deco->type($var::class) . ' ' .
+            $deco->classType($var::class) . ' ' .
             $deco->comment("#$id") . ' ' .
             $deco->scalar($var->format('Y-m-d H:i:s.u T (P)'));
     }

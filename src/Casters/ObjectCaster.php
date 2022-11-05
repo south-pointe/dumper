@@ -24,7 +24,7 @@ class ObjectCaster extends Caster
         );
 
         $summary =
-            $deco->type($var::class) . ' ' .
+            $deco->classType($var::class) . ' ' .
             $deco->comment("#{$id}");
 
         if (count($properties) === 0) {

@@ -45,6 +45,7 @@ class DumpTest extends TestCase
             "text",
             "あいう",
             STDIN,
+            ['a' => 1, 'b' => 2, 3],
             $closedResource,
             new DateTime(),
 //            new Exception(),

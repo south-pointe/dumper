@@ -15,7 +15,7 @@ class EnumCaster extends Caster
         $deco = $this->decorator;
 
         return
-            $deco->type($var::class . "::{$var->name}") . ' ' .
+            $deco->classType($var::class . "::{$var->name}") . ' ' .
             $deco->comment("#{$id}");
     }
 }

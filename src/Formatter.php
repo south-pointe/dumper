@@ -12,6 +12,7 @@ use SouthPointe\DataDump\Casters\EnumCaster;
 use SouthPointe\DataDump\Casters\ObjectCaster;
 use SouthPointe\DataDump\Decorators\Decorator;
 use UnitEnum;
+use function array_is_list;
 use function array_key_exists;
 use function count;
 use function get_debug_type;
@@ -138,7 +139,7 @@ class Formatter
     {
         $deco = $this->decorator;
 
-        $start = $deco->type('array(' . count($var) . ')') . ' [';
+        $start = $deco->classType('array(' . count($var) . ')') . ' [';
         $end = ']';
 
         if (count($var) === 0) {
@@ -151,8 +152,9 @@ class Formatter
             $depth,
             function(int $depth) use ($deco, $var, $objectIds) {
                 $string = '';
+                $isList = array_is_list($var);
                 foreach ($var as $key => $val) {
-                    $decoKey = $deco->parameterKey($key);
+                    $decoKey = $deco->arrayKey($isList ? $key : "\"{$key}\"");
                     $decoVal = $this->format($val, $depth, $objectIds);
                     $ref = $deco->refSymbol(ReflectionReference::fromArrayElement($var, $key) ? '&' : '');
                     $arrow = $deco->parameterDelimiter('=>');
@@ -191,12 +193,12 @@ class Formatter
         // Will get Unknown if resource is closed.
         if ($type === 'Unknown') {
             return
-                $deco->type('resource (closed)') . ' ' .
+                $deco->resourceType('resource (closed)') . ' ' .
                 $deco->comment("@{$id}");
         }
 
         $summary =
-            $deco->type($type) . ' ' .
+            $deco->resourceType($type) . ' ' .
             $deco->comment("@{$id}");
 
         return $this->block(
@@ -235,7 +237,7 @@ class Formatter
             return $this->formatResource($var, $depth);
         }
 
-        return $this->decorator->type($type);
+        return $this->decorator->classType($type);
     }
 
     /**

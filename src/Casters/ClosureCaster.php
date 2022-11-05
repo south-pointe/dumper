@@ -27,18 +27,18 @@ class ClosureCaster extends Caster
                 ? "{$startLine}-{$endLine}"
                 : $startLine;
             return
-                $deco->type($var::class . "@{$file}:{$range}") . ' ' .
+                $deco->classType($var::class . "@{$file}:{$range}") . ' ' .
                 $deco->comment("#{$id}");
         }
 
         if ($class = $ref->getClosureScopeClass()) {
             return
-                $deco->type("{$class->getName()}::{$ref->getName()}(...)") . ' ' .
+                $deco->classType("{$class->getName()}::{$ref->getName()}(...)") . ' ' .
                 $deco->comment("#{$id}");
         }
 
         return
-            $deco->type("{$ref->getName()}(...)") . ' ' .
+            $deco->classType("{$ref->getName()}(...)") . ' ' .
             $deco->comment("#{$id}");
     }
 }
