@@ -11,6 +11,7 @@ use Tests\SouthPointe\DataDump\Samples\SimpleBackedEnum;
 use Tests\SouthPointe\DataDump\Samples\SimpleClass;
 use Tests\SouthPointe\DataDump\Samples\SimpleEnum;
 use function assert;
+use function dump;
 use function fclose;
 use function tmpfile;
 use const INF;
@@ -44,6 +45,7 @@ class DumpTest extends TestCase
             -INF,
             "text",
             "あいう",
+            "text\r\n\t\"",
             STDIN,
             ['a' => 1, 'b' => 2, 3],
             $closedResource,

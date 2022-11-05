@@ -31,6 +31,7 @@ use function is_resource;
 use function is_string;
 use function spl_object_id;
 use function str_contains;
+use function str_replace;
 use function stream_get_meta_data;
 
 class Formatter
@@ -91,6 +92,11 @@ class Formatter
      */
     protected function formatString(string $var): string
     {
+        $var = str_replace(
+            ["\e", "\n", "\r", "\t"],
+            ['\e', '\n', '\r', '\t'],
+            $var
+        );
         return $this->decorator->scalar("\"{$var}\"");
     }
 

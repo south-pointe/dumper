@@ -4,18 +4,28 @@ namespace SouthPointe\DataDump\Decorators;
 
 use SouthPointe\Ansi\Ansi;
 use SouthPointe\Ansi\Codes\Color;
+use function fwrite;
 use function is_int;
 use const PHP_EOL;
+use const STDOUT;
 
 class AnsiDecorator implements Decorator
 {
     /**
+     * @var resource
+     */
+    private mixed $resource;
+
+    /**
+     * @param resource $resource
      * @param string $indentation
      */
     public function __construct(
+        mixed $resource = STDOUT,
         protected string $indentation = '  ',
     )
     {
+        $this->resource = $resource;
     }
 
     /**
@@ -25,7 +35,7 @@ class AnsiDecorator implements Decorator
     public function output(string $string): void
     {
         $eol = $this->eol();
-        echo "{$eol}{$string}{$eol}";
+        fwrite($this->resource, "{$eol}{$string}{$eol}");
     }
 
     /**
