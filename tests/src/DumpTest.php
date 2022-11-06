@@ -3,6 +3,8 @@
 namespace Tests\SouthPointe\DataDump;
 
 use DateTime;
+use SouthPointe\Ansi\Ansi;
+use SouthPointe\Ansi\Codes\Color;
 use SouthPointe\DataDump\Decorators\AnsiDecorator;
 use SouthPointe\DataDump\Dumper;
 use SouthPointe\DataDump\Formatter;
@@ -11,9 +13,11 @@ use Tests\SouthPointe\DataDump\Samples\SimpleBackedEnum;
 use Tests\SouthPointe\DataDump\Samples\SimpleClass;
 use Tests\SouthPointe\DataDump\Samples\SimpleEnum;
 use function assert;
+use function debug_zval_dump;
 use function dump;
 use function fclose;
 use function tmpfile;
+use function var_dump;
 use const INF;
 use const NAN;
 use const STDIN;
@@ -45,7 +49,7 @@ class DumpTest extends TestCase
             -INF,
             "text",
             "あいう",
-            "text\r\n\t\"",
+            "text\r\n\t\"\x1B",
             STDIN,
             ['a' => 1, 'b' => 2, 3],
             $closedResource,

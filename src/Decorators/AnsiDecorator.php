@@ -16,6 +16,8 @@ class AnsiDecorator implements Decorator
      */
     private mixed $resource;
 
+    private Color $scalarColor = Color::LightGoldenrod3;
+
     /**
      * @param resource $resource
      * @param string $indentation
@@ -44,7 +46,16 @@ class AnsiDecorator implements Decorator
      */
     public function refSymbol(string $string): string
     {
-        return $string;
+        return $this->withColor($string, Color::MediumVioletRed);
+    }
+
+    /**
+     * @param string $string
+     * @return string
+     */
+    public function escapedString(string $string): string
+    {
+        return $this->withColor($string, Color::code(130), $this->scalarColor);
     }
 
     /**
@@ -71,7 +82,7 @@ class AnsiDecorator implements Decorator
      */
     public function scalar(mixed $value): string
     {
-        return $this->withColor($value, Color::LightGoldenrod3);
+        return $this->withColor($value, $this->scalarColor);
     }
 
     /**
@@ -145,12 +156,16 @@ class AnsiDecorator implements Decorator
      * @param Color $color
      * @return string
      */
-    protected function withColor(string $value, Color $color): string
+    protected function withColor(string $value, Color $color, ?Color $reset = null): string
     {
-        return Ansi::buffer()
+        $buffer = Ansi::buffer()
             ->foreground($color)
-            ->text($value)
-            ->resetStyle()
-            ->toString();
+            ->text($value);
+
+        $reset !== null
+            ? $buffer->foreground($reset)
+            : $buffer->resetStyle();
+
+        return $buffer->toString();
     }
 }

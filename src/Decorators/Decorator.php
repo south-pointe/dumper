@@ -14,6 +14,8 @@ interface Decorator
 
     public function refSymbol(string $string): string;
 
+    public function escapedString(string $string): string;
+
     public function classType(string $type): string;
 
     public function resourceType(string $type): string;

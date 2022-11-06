@@ -14,10 +14,13 @@ use SouthPointe\DataDump\Decorators\Decorator;
 use UnitEnum;
 use function array_is_list;
 use function array_key_exists;
+use function array_map;
 use function count;
+use function explode;
 use function get_debug_type;
 use function get_resource_id;
 use function get_resource_type;
+use function implode;
 use function is_a;
 use function is_array;
 use function is_bool;
@@ -29,7 +32,10 @@ use function is_null;
 use function is_object;
 use function is_resource;
 use function is_string;
+use function ord;
+use function preg_replace_callback_array;
 use function spl_object_id;
+use function sprintf;
 use function str_contains;
 use function str_replace;
 use function stream_get_meta_data;
@@ -67,7 +73,7 @@ class Formatter
     {
         return match (true) {
             is_null($var) => $this->formatNull(),
-            is_string($var) => $this->formatString($var),
+            is_string($var) => $this->formatString($var, $depth),
             is_bool($var) => $this->formatBool($var),
             is_int($var) => $this->formatInt($var),
             is_float($var) => $this->formatFloat($var),
@@ -90,14 +96,43 @@ class Formatter
      * @param string $var
      * @return string
      */
-    protected function formatString(string $var): string
+    protected function formatString(string $var, int $depth): string
     {
-        $var = str_replace(
-            ["\e", "\n", "\r", "\t"],
-            ['\e', '\n', '\r', '\t'],
-            $var
-        );
-        return $this->decorator->scalar("\"{$var}\"");
+        $deco = $this->decorator;
+        $singleLine = !str_contains($var, "\n");
+
+        $var = (string) preg_replace_callback_array([
+            '~[\x00-\x1F\x7F]~' => static function(array $match) use ($deco,) {
+                $map = [
+                    "\t" => '\t',
+                    "\n" => '\n',
+                    "\v" => '\v',
+                    "\f" => '\f',
+                    "\r" => '\r',
+                    "\e" => '\e',
+                ];
+                $escaped = $map[$match[0]] ?? sprintf('\x%02X', ord($match[0]));
+                return $deco->escapedString($escaped);
+            },
+        ], $var);
+
+        if ($singleLine) {
+            return
+                $deco->comment('"') .
+                $deco->scalar($var) .
+                $deco->comment('"');
+        }
+
+        return
+            $deco->comment('"""') . $deco->eol() .
+            implode(
+                "\n",
+                array_map(
+                    fn(string $l) => $deco->indent($deco->scalar($l), $depth + 1),
+                    explode('\n', $var),
+                )
+            ) . $deco->eol() .
+            $deco->indent($deco->comment('"""'), $depth + 1);
     }
 
     /**
@@ -204,7 +239,7 @@ class Formatter
         }
 
         $summary =
-            $deco->resourceType($type) . ' ' .
+            $deco->resourceType('resource (' . $type . ')') . ' ' .
             $deco->comment("@{$id}");
 
         return $this->block(
