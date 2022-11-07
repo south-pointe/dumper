@@ -36,7 +36,7 @@ class ObjectCaster extends Caster
                 $summary . ' ' .
                 $deco->comment('<circular>') . ' ' .
                 '{ ' .
-                $deco->comment('…') .
+                $deco->comment('⋯') .
                 ' }';
         }
 

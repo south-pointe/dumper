@@ -14,7 +14,6 @@ use SouthPointe\DataDump\Decorators\Decorator;
 use UnitEnum;
 use function array_is_list;
 use function array_key_exists;
-use function array_map;
 use function count;
 use function explode;
 use function get_debug_type;
@@ -32,12 +31,12 @@ use function is_null;
 use function is_object;
 use function is_resource;
 use function is_string;
-use function ord;
+use function mb_strcut;
+use function mb_strlen;
 use function preg_replace_callback_array;
 use function spl_object_id;
 use function sprintf;
 use function str_contains;
-use function str_replace;
 use function stream_get_meta_data;
 
 class Formatter
@@ -54,9 +53,11 @@ class Formatter
 
     /**
      * @param Decorator $decorator
+     * @param Options $options
      */
     public function __construct(
         protected Decorator $decorator,
+        protected Options $options = new Options(),
     )
     {
         $this->casterResolvers += [
@@ -104,11 +105,23 @@ class Formatter
     {
         $deco = $this->decorator;
         $singleLine = !str_contains($var, "\n");
+        $tooLong = mb_strlen($var) > $this->options->maxStringLength;
 
+        // Trim the string if too long
+        // Ellipsis will be added after control and space replacement.
+        if ($tooLong) {
+            $var = mb_strcut($var, 0, $this->options->maxStringLength);
+        }
+
+        // Replace control and space chars with raw string representation.
         $var = (string) preg_replace_callback_array([
             '/[\pC]/u' => fn(array $match) => $this->formatControlChar($match[0]),
             '/[\pZ]/u' => fn(array $match) => $this->formatSpaceChar($match[0]),
         ], $var);
+
+        if ($tooLong) {
+            $var.= $deco->comment(' … <truncated>');
+        }
 
         if ($singleLine) {
             return
