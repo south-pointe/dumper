@@ -52,6 +52,9 @@ class Formatter
      */
     protected array $resolvedCasters = [];
 
+    /**
+     * @param Decorator $decorator
+     */
     public function __construct(
         protected Decorator $decorator,
     )
@@ -94,6 +97,7 @@ class Formatter
 
     /**
      * @param string $var
+     * @param int $depth
      * @return string
      */
     protected function formatString(string $var, int $depth): string
@@ -102,18 +106,8 @@ class Formatter
         $singleLine = !str_contains($var, "\n");
 
         $var = (string) preg_replace_callback_array([
-            '~[\x00-\x1F\x7F]~' => static function(array $match) use ($deco,) {
-                $map = [
-                    "\t" => '\t',
-                    "\n" => '\n',
-                    "\v" => '\v',
-                    "\f" => '\f',
-                    "\r" => '\r',
-                    "\e" => '\e',
-                ];
-                $escaped = $map[$match[0]] ?? sprintf('\x%02X', ord($match[0]));
-                return $deco->escapedString($escaped);
-            },
+            '/[\pC]/u' => fn(array $match) => $this->formatControlChar($match[0]),
+            '/[\pZ]/u' => fn(array $match) => $this->formatSpaceChar($match[0]),
         ], $var);
 
         if ($singleLine) {
@@ -123,16 +117,56 @@ class Formatter
                 $deco->comment('"');
         }
 
-        return
-            $deco->comment('"""') . $deco->eol() .
-            implode(
-                "\n",
-                array_map(
-                    fn(string $l) => $deco->indent($deco->scalar($l), $depth + 1),
-                    explode('\n', $var),
-                )
-            ) . $deco->eol() .
-            $deco->indent($deco->comment('"""'), $depth + 1);
+        $string = $deco->comment('"""') . $deco->eol();
+        $parts = [];
+        foreach (explode('\n', $var) as $line) {
+            $parts[]= $deco->indent($deco->scalar($line), $depth + 1);
+        }
+        $string.= implode($deco->escapedString("\\n\n"), $parts);
+        $string.= $deco->eol();
+        $string.= $deco->indent($deco->comment('"""'), $depth + 1);
+        return $string;
+    }
+
+    /**
+     * @param string $char
+     * @return string
+     */
+    protected function formatControlChar(string $char): string
+    {
+        // Use shorthand representation, where possible.
+        $escaped = match ($char) {
+            "\0" => '\0',
+            "\e" => '\e',
+            "\f" => '\f',
+            "\n" => '\n',
+            "\r" => '\r',
+            "\t" => '\t',
+            "\v" => '\v',
+            default => null,
+        };
+
+        if ($escaped === null) {
+            $codepoint = mb_ord($char);
+            $escaped = $codepoint > 255
+                ? sprintf('\u%04X', $codepoint)
+                : sprintf('\x%02X', $codepoint);
+        }
+
+        return $this->decorator->escapedString($escaped);
+    }
+
+    /**
+     * @param string $space
+     * @return string
+     */
+    protected function formatSpaceChar(string $space): string
+    {
+        if ($space === ' ') {
+            return $space;
+        }
+        $escaped = sprintf('\u%02X', mb_ord($space));
+        return $this->decorator->escapedString($escaped);
     }
 
     /**

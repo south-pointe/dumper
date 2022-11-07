@@ -3,8 +3,6 @@
 namespace Tests\SouthPointe\DataDump;
 
 use DateTime;
-use SouthPointe\Ansi\Ansi;
-use SouthPointe\Ansi\Codes\Color;
 use SouthPointe\DataDump\Decorators\AnsiDecorator;
 use SouthPointe\DataDump\Dumper;
 use SouthPointe\DataDump\Formatter;
@@ -13,11 +11,8 @@ use Tests\SouthPointe\DataDump\Samples\SimpleBackedEnum;
 use Tests\SouthPointe\DataDump\Samples\SimpleClass;
 use Tests\SouthPointe\DataDump\Samples\SimpleEnum;
 use function assert;
-use function debug_zval_dump;
-use function dump;
 use function fclose;
 use function tmpfile;
-use function var_dump;
 use const INF;
 use const NAN;
 use const STDIN;
@@ -49,7 +44,7 @@ class DumpTest extends TestCase
             -INF,
             "text",
             "あいう",
-            "text\r\n\t\"\x1B",
+            "text\r\n\t\"\x1B\0a123\v\sq\\na",
             STDIN,
             ['a' => 1, 'b' => 2, 3],
             $closedResource,
@@ -69,5 +64,7 @@ class DumpTest extends TestCase
         $formatter = new Formatter($decorator);
         $vd = new Dumper($decorator, $formatter);
         $vd->dump($vars);
+
+        $vd->dump("a\u{200E}\u{200A}\u{061C}\u{0012}\u{204A}b");
     }
 }
