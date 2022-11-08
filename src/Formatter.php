@@ -4,11 +4,13 @@ namespace SouthPointe\DataDump;
 
 use Closure;
 use DateTime;
+use Exception;
 use ReflectionReference;
 use SouthPointe\DataDump\Casters\Caster;
 use SouthPointe\DataDump\Casters\ClosureCaster;
 use SouthPointe\DataDump\Casters\DateTimeCaster;
 use SouthPointe\DataDump\Casters\EnumCaster;
+use SouthPointe\DataDump\Casters\ExceptionCaster;
 use SouthPointe\DataDump\Casters\ObjectCaster;
 use SouthPointe\DataDump\Decorators\Decorator;
 use UnitEnum;
@@ -63,6 +65,7 @@ class Formatter
         $this->casterResolvers += [
             Closure::class => fn() => new ClosureCaster($this->decorator, $this),
             DateTime::class => fn() => new DateTimeCaster($this->decorator, $this),
+            Exception::class => fn() => new ExceptionCaster($this->decorator, $this),
             UnitEnum::class => fn() => new EnumCaster($this->decorator, $this),
         ];
     }

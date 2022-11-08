@@ -40,12 +40,13 @@ class ObjectCaster extends Caster
                 ' }';
         }
 
+        $objectIds[$id] ??= true;
+
         return $this->formatter->block(
             "{$summary} {",
             "}",
             $depth,
-            function (int $depth) use ($deco, $var, $id, $properties, $objectIds) {
-                $objectIds[$id] ??= true;
+            function (int $depth) use ($deco, $var, $properties, $objectIds) {
                 $string = '';
                 foreach ($properties as $prop) {
                     $access = ($prop->getModifiers() & ReflectionProperty::IS_STATIC)

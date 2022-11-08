@@ -3,6 +3,7 @@
 namespace Tests\SouthPointe\DataDump;
 
 use DateTime;
+use RuntimeException;
 use SouthPointe\DataDump\Decorators\AnsiDecorator;
 use SouthPointe\DataDump\Dumper;
 use SouthPointe\DataDump\Formatter;
@@ -52,7 +53,7 @@ class DumpTest extends TestCase
             ['a' => 1, 'b' => 2, 3],
             $closedResource,
             new DateTime(),
-//            new Exception(),
+            new RuntimeException('test'),
             new SimpleClass(),
             static fn(string $str): string => 'abc' . $str,
             DateTime::createFromFormat(...),
