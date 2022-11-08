@@ -6,6 +6,7 @@ use ReflectionClass;
 use ReflectionProperty;
 use function array_key_exists;
 use function count;
+use function method_exists;
 
 class ObjectCaster extends Caster
 {
@@ -62,6 +63,10 @@ class ObjectCaster extends Caster
      */
     protected function getProperties(object $var): array
     {
+        if (method_exists($var, '__debugInfo')) {
+            return $var->__debugInfo();
+        }
+
         $reflections = (new ReflectionClass($var))->getProperties(
             ReflectionProperty::IS_STATIC |
             ReflectionProperty::IS_PUBLIC |
