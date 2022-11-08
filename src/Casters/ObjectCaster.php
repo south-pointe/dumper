@@ -15,13 +15,7 @@ class ObjectCaster extends Caster
     public function cast(object $var, int $id, int $depth, array $objectIds): string
     {
         $deco = $this->decorator;
-
-        $properties = (new ReflectionClass($var))->getProperties(
-            ReflectionProperty::IS_STATIC |
-            ReflectionProperty::IS_PUBLIC |
-            ReflectionProperty::IS_PROTECTED |
-            ReflectionProperty::IS_PRIVATE,
-        );
+        $properties = $this->getProperties($var);
 
         $summary =
             $deco->classType($var::class) . ' ' .
@@ -46,16 +40,13 @@ class ObjectCaster extends Caster
             "{$summary} {",
             "}",
             $depth,
-            function (int $depth) use ($deco, $var, $properties, $objectIds) {
+            function (int $depth) use ($deco, $properties, $objectIds) {
                 $string = '';
-                foreach ($properties as $prop) {
-                    $access = ($prop->getModifiers() & ReflectionProperty::IS_STATIC)
-                        ? 'static '
-                        : '';
+                foreach ($properties as $key => $val) {
                     $string .= $deco->line(
-                        $deco->parameterKey($access . $prop->getName()) .
+                        $deco->parameterKey($key) .
                         $deco->parameterDelimiter(':') . ' ' .
-                        $this->formatter->format($prop->getValue($var), $depth, $objectIds) .
+                        $this->formatter->format($val, $depth, $objectIds) .
                         $deco->parameterDelimiter(','),
                         $depth,
                     );
@@ -63,5 +54,29 @@ class ObjectCaster extends Caster
                 return $string;
             },
         );
+    }
+
+    /**
+     * @param object $var
+     * @return array<string, mixed>
+     */
+    protected function getProperties(object $var): array
+    {
+        $reflections = (new ReflectionClass($var))->getProperties(
+            ReflectionProperty::IS_STATIC |
+            ReflectionProperty::IS_PUBLIC |
+            ReflectionProperty::IS_PROTECTED |
+            ReflectionProperty::IS_PRIVATE,
+        );
+        $properties = [];
+        foreach ($reflections as $reflection) {
+            $access = ($reflection->getModifiers() & ReflectionProperty::IS_STATIC)
+                ? 'static '
+                : '';
+            $name = $access . $reflection->getName();
+            $value = $reflection->getValue($var);
+            $properties[$name] = $value;
+        }
+        return $properties;
     }
 }
