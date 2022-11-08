@@ -8,6 +8,7 @@ use SouthPointe\DataDump\Decorators\AnsiDecorator;
 use SouthPointe\DataDump\Dumper;
 use SouthPointe\DataDump\Formatter;
 use Tests\SouthPointe\DataDump\Samples\CircularClass;
+use Tests\SouthPointe\DataDump\Samples\DebuggableClass;
 use Tests\SouthPointe\DataDump\Samples\SimpleBackedEnum;
 use Tests\SouthPointe\DataDump\Samples\SimpleClass;
 use Tests\SouthPointe\DataDump\Samples\SimpleEnum;
@@ -55,6 +56,7 @@ class DumpTest extends TestCase
             new DateTime(),
             new RuntimeException('test'),
             new SimpleClass(),
+            new DebuggableClass(),
             static fn(string $str): string => 'abc' . $str,
             DateTime::createFromFormat(...),
             strstr(...),
