@@ -3,10 +3,8 @@
 namespace SouthPointe\DataDump\Casters;
 
 use Exception;
-use ReflectionClass;
-use ReflectionProperty;
+use Throwable;
 use function count;
-use function implode;
 use function str_pad;
 use function strlen;
 use const STR_PAD_LEFT;
@@ -27,23 +25,48 @@ class ExceptionCaster extends Caster
             $deco->scalar("{$var->getMessage()} in {$var->getFile()}:{$var->getLine()}") .
             $deco->eol();
 
-        $traces = $var->getTrace();
-        $traceCount = count($traces);
-        $maxSize = strlen((string) $traceCount);
-        $padding = fn(int $i) => str_pad("{$i}", $maxSize, ' ', STR_PAD_LEFT);
-        $string = '';
-        foreach ($traces as $index => $trace) {
-            $hasFile = isset($trace['file']) && isset($trace['line']);
-             $line = $padding($index) . ': ' .
-                ($trace['file'] ?? '') . ($hasFile ? ':' : '') . ($trace['line'] ?? '') .
-                ($hasFile ? ' » ' : '') .
-                ($trace['class'] ?? '') . ($trace['type'] ?? '') . $trace['function'] . '(⋯)';
-             $line = $deco->scalar($line);
-             $string.= $index < ($traceCount - 1)
-                ? $deco->line($line, $depth + 1)
-                : $deco->indent($line, $depth + 1);
-        }
+        $string = $deco->indent(
+            $deco->parameterKey('trace') .
+            $deco->parameterDelimiter(':') . ' ' .
+            $this->formatTrace($var, $depth),
+            $depth,
+        );
 
         return $summary . $string;
+    }
+
+    /**
+     * @param Throwable $var
+     * @param int $depth
+     * @return string
+     */
+    protected function formatTrace(Throwable $var, int $depth): string
+    {
+        $deco = $this->decorator;
+
+        $string = '';
+        $traces = $var->getTrace();
+        $padLength = strlen((string) count($traces));
+        foreach ($traces as $index => $trace) {
+            $hasFile = isset($trace['file']) && isset($trace['line']);
+            $number = str_pad("{$index}", $padLength, ' ', STR_PAD_LEFT);
+            $file = ($trace['file'] ?? '') .
+                ($hasFile ? ':' : '') .
+                ($trace['line'] ?? '') .
+                ($hasFile ? ' » ' : '');
+            $function = ($trace['class'] ?? '') .
+                ($trace['type'] ?? '') .
+                $trace['function'] .
+                (count($trace['args'] ?? []) > 0 ? '(⋯)' : '()');
+            $line = $deco->scalar("{$number}: {$file}{$function}");
+            $string.=
+                $deco->indent($line, $depth + 1) .
+                $deco->eol();
+        }
+
+        return
+            $deco->comment('"""') . $deco->eol() .
+            $string .
+            $deco->indent($deco->comment('"""'), $depth + 1);
     }
 }
