@@ -2,17 +2,16 @@
 
 namespace SouthPointe\DataDump\Casters;
 
-use Exception;
 use Throwable;
 use function count;
 use function str_pad;
 use function strlen;
 use const STR_PAD_LEFT;
 
-class ExceptionCaster extends Caster
+class ThrowableCaster extends Caster
 {
     /**
-     * @param Exception $var
+     * @param Throwable $var
      * @inheritDoc
      */
     public function cast(object $var, int $id, int $depth, array $objectIds): string
