@@ -45,7 +45,9 @@ class ThrowableCaster extends Caster
 
         $string = '';
         $traces = $var->getTrace();
-        $padLength = strlen((string) count($traces));
+        $traceCount = count($traces);
+        $padLength = strlen((string) $traceCount);
+        $lastIndex = $traceCount - 1;
         foreach ($traces as $index => $trace) {
             $hasFile = isset($trace['file']) && isset($trace['line']);
             $number = str_pad("{$index}", $padLength, ' ', STR_PAD_LEFT);
@@ -58,14 +60,13 @@ class ThrowableCaster extends Caster
                 $trace['function'] .
                 (count($trace['args'] ?? []) > 0 ? '(⋯)' : '()');
             $line = $deco->scalar("{$number}: {$file}{$function}");
-            $string.=
-                $deco->indent($line, $depth + 1) .
-                $deco->eol();
+            $string.= $deco->indent($line, $depth + 1);
+
+            if ($index < $lastIndex) {
+                $string.= $deco->eol();
+            }
         }
 
-        return
-            $deco->comment('"""') . $deco->eol() .
-            $string .
-            $deco->indent($deco->comment('"""'), $depth + 1);
+        return $deco->eol() . $string;
     }
 }

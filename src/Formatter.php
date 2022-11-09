@@ -250,8 +250,7 @@ class Formatter
                     $decoVal = $this->format($val, $depth, $objectIds);
                     $ref = $deco->refSymbol(ReflectionReference::fromArrayElement($var, $key) ? '&' : '');
                     $arrow = $deco->parameterDelimiter('=>');
-                    $comma = $deco->parameterDelimiter(',');
-                    $string .= $deco->line("{$decoKey} {$arrow} {$ref}{$decoVal}{$comma}", $depth);
+                    $string .= $deco->line("{$decoKey} {$arrow} {$ref}{$decoVal}", $depth);
                 }
                 return $string;
             },

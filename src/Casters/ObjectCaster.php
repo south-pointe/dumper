@@ -47,8 +47,7 @@ class ObjectCaster extends Caster
                     $string .= $deco->line(
                         $deco->parameterKey($key) .
                         $deco->parameterDelimiter(':') . ' ' .
-                        $this->formatter->format($val, $depth, $objectIds) .
-                        $deco->parameterDelimiter(','),
+                        $this->formatter->format($val, $depth, $objectIds),
                         $depth,
                     );
                 }
