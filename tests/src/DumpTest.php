@@ -3,19 +3,17 @@
 namespace Tests\SouthPointe\DataDump;
 
 use DateTime;
-use RuntimeException;
 use SouthPointe\DataDump\Decorators\AnsiDecorator;
 use SouthPointe\DataDump\Dumper;
 use SouthPointe\DataDump\Formatter;
 use Tests\SouthPointe\DataDump\Samples\CircularClass;
+use Tests\SouthPointe\DataDump\Samples\ContextualException;
 use Tests\SouthPointe\DataDump\Samples\DebuggableClass;
 use Tests\SouthPointe\DataDump\Samples\SimpleBackedEnum;
 use Tests\SouthPointe\DataDump\Samples\SimpleClass;
 use Tests\SouthPointe\DataDump\Samples\SimpleEnum;
 use function assert;
-use function dump;
 use function fclose;
-use function str_repeat;
 use function tmpfile;
 use const INF;
 use const NAN;
@@ -54,7 +52,7 @@ class DumpTest extends TestCase
             ['a' => 1, 'b' => 2, 3],
             $closedResource,
             new DateTime(),
-            new RuntimeException('test'),
+            new ContextualException('test'),
             new SimpleClass(),
             new DebuggableClass(),
             static fn(string $str): string => 'abc' . $str,

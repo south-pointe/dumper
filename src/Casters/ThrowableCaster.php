@@ -4,6 +4,7 @@ namespace SouthPointe\DataDump\Casters;
 
 use Throwable;
 use function count;
+use function method_exists;
 use function str_pad;
 use function strlen;
 use const STR_PAD_LEFT;
@@ -27,7 +28,8 @@ class ThrowableCaster extends Caster
         $string = $deco->indent(
             $deco->parameterKey('trace') .
             $deco->parameterDelimiter(':') . ' ' .
-            $this->formatTrace($var, $depth),
+            $this->formatTrace($var, $depth) .
+            $this->formatContext($var, $depth, $objectIds),
             $depth,
         );
 
@@ -68,5 +70,29 @@ class ThrowableCaster extends Caster
         }
 
         return $deco->eol() . $string;
+    }
+
+    /**
+     * @param Throwable $var
+     * @param int $depth
+     * @param array<int, bool> $objectIds
+     * @return string
+     */
+    protected function formatContext(Throwable $var, int $depth, array $objectIds): string
+    {
+        $deco = $this->decorator;
+
+        if (!method_exists($var, 'getContext')) {
+            return '';
+        }
+
+        return
+            $deco->eol() .
+            $deco->indent(
+                $deco->parameterKey('context') .
+                $deco->parameterDelimiter(':') . ' ',
+                $depth,
+            ) .
+            $this->formatter->format($var->getContext(), $depth, $objectIds);
     }
 }
