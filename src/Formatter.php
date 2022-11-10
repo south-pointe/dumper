@@ -4,7 +4,6 @@ namespace SouthPointe\DataDump;
 
 use Closure;
 use DateTime;
-use Exception;
 use ReflectionReference;
 use SouthPointe\DataDump\Casters\Caster;
 use SouthPointe\DataDump\Casters\ClosureCaster;
@@ -12,7 +11,9 @@ use SouthPointe\DataDump\Casters\DateTimeCaster;
 use SouthPointe\DataDump\Casters\EnumCaster;
 use SouthPointe\DataDump\Casters\ThrowableCaster;
 use SouthPointe\DataDump\Casters\ObjectCaster;
+use SouthPointe\DataDump\Decorators\AnsiDecorator;
 use SouthPointe\DataDump\Decorators\Decorator;
+use SouthPointe\DataDump\Decorators\NoDecorator;
 use Throwable;
 use UnitEnum;
 use function array_is_list;
@@ -41,9 +42,15 @@ use function spl_object_id;
 use function sprintf;
 use function str_contains;
 use function stream_get_meta_data;
+use const PHP_SAPI;
 
 class Formatter
 {
+    /**
+     * @var Decorator
+     */
+    protected Decorator $decorator;
+
     /**
      * @var array<class-string, Closure(): Caster>
      */
@@ -59,10 +66,12 @@ class Formatter
      * @param Options $options
      */
     public function __construct(
-        protected Decorator $decorator,
+        ?Decorator $decorator = null,
         protected Options $options = new Options(),
     )
     {
+        $this->decorator = $decorator ?? $this->makeDefaultDecorator();
+
         $this->casterResolvers += [
             Closure::class => fn() => new ClosureCaster($this->decorator, $this),
             DateTime::class => fn() => new DateTimeCaster($this->decorator, $this),
@@ -72,14 +81,25 @@ class Formatter
     }
 
     /**
+     * @return Decorator
+     */
+    protected function makeDefaultDecorator(): Decorator
+    {
+        return match (PHP_SAPI) {
+            'cli' => new AnsiDecorator($this->options),
+            default => new NoDecorator($this->options),
+        };
+    }
+
+    /**
      * @param mixed $var
      * @param int $depth
      * @param array<int, bool> $objectIds
      * @return string
      */
-    public function format(mixed $var, int $depth, array $objectIds = []): string
+    public function format(mixed $var, int $depth = 0, array $objectIds = []): string
     {
-        return match (true) {
+        $string = match (true) {
             is_null($var) => $this->formatNull(),
             is_string($var) => $this->formatString($var, $depth),
             is_bool($var) => $this->formatBool($var),
@@ -90,6 +110,10 @@ class Formatter
             is_resource($var) => $this->formatResource($var, $depth),
             default => $this->formatUnknown($var, $depth),
         };
+
+        return $depth === 0
+            ? $this->decorator->root($string)
+            : $string;
     }
 
     /**

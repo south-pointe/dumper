@@ -6,6 +6,7 @@ class Options
 {
     public function __construct(
         public readonly int $maxStringLength = 5000,
+        public readonly string $indentation = '  ',
     )
     {
     }

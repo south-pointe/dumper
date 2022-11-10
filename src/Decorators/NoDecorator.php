@@ -2,19 +2,11 @@
 
 namespace SouthPointe\DataDump\Decorators;
 
-use SouthPointe\Ansi\Ansi;
-use SouthPointe\Ansi\Codes\Color;
 use SouthPointe\DataDump\Options;
-use function is_int;
 use const PHP_EOL;
 
-class AnsiDecorator implements Decorator
+class NoDecorator implements Decorator
 {
-    /**
-     * @var Color
-     */
-    private Color $scalarColor = Color::LightGoldenrod3;
-
     /**
      * @param Options $options
      */
@@ -39,7 +31,7 @@ class AnsiDecorator implements Decorator
      */
     public function refSymbol(string $string): string
     {
-        return $this->withColor($string, Color::MediumVioletRed);
+        return $string;
     }
 
     /**
@@ -48,7 +40,7 @@ class AnsiDecorator implements Decorator
      */
     public function escapedString(string $string): string
     {
-        return $this->withColor($string, Color::DarkOrange3_A, $this->scalarColor);
+        return $string;
     }
 
     /**
@@ -57,7 +49,7 @@ class AnsiDecorator implements Decorator
      */
     public function classType(string $type): string
     {
-        return $this->withColor($type, Color::DarkCyan);
+        return $type;
     }
 
     /**
@@ -66,7 +58,7 @@ class AnsiDecorator implements Decorator
      */
     public function resourceType(string $type): string
     {
-        return $this->withColor($type, Color::DarkCyan);
+        return $type;
     }
 
     /**
@@ -75,7 +67,7 @@ class AnsiDecorator implements Decorator
      */
     public function scalar(mixed $value): string
     {
-        return $this->withColor((string) $value, $this->scalarColor);
+        return (string) $value;
     }
 
     /**
@@ -84,9 +76,7 @@ class AnsiDecorator implements Decorator
      */
     public function parameterKey(int|string $key): string
     {
-        return is_int($key)
-            ? $this->withColor((string) $key, Color::Violet)
-            : $this->withColor($key, Color::CornflowerBlue);
+        return (string) $key;
     }
 
     /**
@@ -95,7 +85,7 @@ class AnsiDecorator implements Decorator
      */
     public function parameterDelimiter(string $delimiter): string
     {
-        return $this->withColor($delimiter, Color::Gray30);
+        return $delimiter;
     }
 
     /**
@@ -104,7 +94,7 @@ class AnsiDecorator implements Decorator
      */
     public function arrayKey(int|string $key): string
     {
-        return $this->withColor((string) $key, Color::Violet);
+        return (string) $key;
     }
 
     /**
@@ -113,7 +103,7 @@ class AnsiDecorator implements Decorator
      */
     public function comment(string $comment): string
     {
-        return $this->withColor($comment, Color::Gray);
+        return $comment;
     }
 
     /**
@@ -142,24 +132,5 @@ class AnsiDecorator implements Decorator
     public function eol(): string
     {
         return PHP_EOL;
-    }
-
-    /**
-     * @param string $value
-     * @param Color $color
-     * @param Color|null $reset
-     * @return string
-     */
-    protected function withColor(string $value, Color $color, ?Color $reset = null): string
-    {
-        $buffer = Ansi::buffer()
-            ->foreground($color)
-            ->text($value);
-
-        $reset !== null
-            ? $buffer->foreground($reset)
-            : $buffer->resetStyle();
-
-        return $buffer->toString();
     }
 }

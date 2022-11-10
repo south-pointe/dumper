@@ -4,7 +4,7 @@ namespace SouthPointe\DataDump\Decorators;
 
 interface Decorator
 {
-    public function output(string $string): void;
+    public function root(string $string): string;
 
     public function indent(string $string, int $depth): string;
 

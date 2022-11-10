@@ -2,13 +2,15 @@
 
 namespace SouthPointe\DataDump;
 
-use SouthPointe\DataDump\Decorators\Decorator;
-
 class Dumper
 {
+    /**
+     * @param Formatter $formatter
+     * @param Writer $writer
+     */
     public function __construct(
-        protected Decorator $decorator,
-        protected Formatter $formatter,
+        protected Formatter $formatter = new Formatter(),
+        protected Writer $writer = new Writer(),
     )
     {
     }
@@ -19,7 +21,8 @@ class Dumper
      */
     public function dump(mixed $var): void
     {
-        $string = $this->formatter->format($var, 0);
-        $this->decorator->output($string);
+        $this->writer->write(
+            $this->formatter->format($var)
+        );
     }
 }

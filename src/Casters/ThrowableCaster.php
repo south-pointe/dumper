@@ -25,13 +25,9 @@ class ThrowableCaster extends Caster
             $deco->scalar("{$var->getMessage()} in {$var->getFile()}:{$var->getLine()}") .
             $deco->eol();
 
-        $string = $deco->indent(
-            $deco->parameterKey('trace') .
-            $deco->parameterDelimiter(':') . ' ' .
-            $this->formatTrace($var, $depth) .
-            $this->formatContext($var, $depth, $objectIds),
-            $depth,
-        );
+        $string =
+            $this->formatTrace($var, $depth + 1) .
+            $this->formatContext($var, $depth + 1, $objectIds);
 
         return $summary . $string;
     }
@@ -45,11 +41,14 @@ class ThrowableCaster extends Caster
     {
         $deco = $this->decorator;
 
-        $string = '';
+        $string = $deco->line(
+            $deco->parameterKey('trace') .
+            $deco->parameterDelimiter(':') . ' ',
+            $depth,
+        );
+
         $traces = $var->getTrace();
-        $traceCount = count($traces);
-        $padLength = strlen((string) $traceCount);
-        $lastIndex = $traceCount - 1;
+        $padLength = strlen((string) count($traces));
         foreach ($traces as $index => $trace) {
             $hasFile = isset($trace['file']) && isset($trace['line']);
             $number = str_pad("{$index}", $padLength, ' ', STR_PAD_LEFT);
@@ -62,14 +61,10 @@ class ThrowableCaster extends Caster
                 $trace['function'] .
                 (count($trace['args'] ?? []) > 0 ? '(⋯)' : '()');
             $line = $deco->scalar("{$number}: {$file}{$function}");
-            $string.= $deco->indent($line, $depth + 1);
-
-            if ($index < $lastIndex) {
-                $string.= $deco->eol();
-            }
+            $string.= $deco->line($line, $depth + 1);
         }
 
-        return $deco->eol() . $string;
+        return $string;
     }
 
     /**
@@ -87,12 +82,13 @@ class ThrowableCaster extends Caster
         }
 
         return
-            $deco->eol() .
-            $deco->indent(
+            $deco->line(
                 $deco->parameterKey('context') .
-                $deco->parameterDelimiter(':') . ' ',
+                $deco->parameterDelimiter(':') . ' ' .
+                $this->formatter->format(
+                    $var->getContext(), $depth, $objectIds
+                ),
                 $depth,
-            ) .
-            $this->formatter->format($var->getContext(), $depth, $objectIds);
+            );
     }
 }

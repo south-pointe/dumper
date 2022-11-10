@@ -4,6 +4,7 @@ namespace Tests\SouthPointe\DataDump;
 
 use DateTime;
 use SouthPointe\DataDump\Decorators\AnsiDecorator;
+use SouthPointe\DataDump\Decorators\NoDecorator;
 use SouthPointe\DataDump\Dumper;
 use SouthPointe\DataDump\Formatter;
 use Tests\SouthPointe\DataDump\Samples\CircularClass;
@@ -66,7 +67,7 @@ class DumpTest extends TestCase
 
         $decorator = new AnsiDecorator();
         $formatter = new Formatter($decorator);
-        $vd = new Dumper($decorator, $formatter);
+        $vd = new Dumper($formatter);
         $vd->dump($vars);
 
         $vd->dump("a\u{200E}\u{200A}\u{061C}\u{0012}\u{204A}b");
