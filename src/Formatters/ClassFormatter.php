@@ -1,19 +1,35 @@
 <?php declare(strict_types=1);
 
-namespace SouthPointe\DataDump\Casters;
+namespace SouthPointe\DataDump\Formatters;
 
 use ReflectionClass;
 use ReflectionProperty;
+use SouthPointe\DataDump\Decorators\Decorator;
 use function array_key_exists;
 use function count;
 use function method_exists;
 
-class ObjectCaster extends Caster
+class ClassFormatter
 {
     /**
-     * @inheritDoc
+     * @param AutoFormatter $autoFormatter
+     * @param Decorator $decorator
      */
-    public function cast(object $var, int $id, int $depth, array $objectIds): string
+    public function __construct(
+        protected AutoFormatter $autoFormatter,
+        protected Decorator $decorator,
+    )
+    {
+    }
+
+    /**
+     * @param object $var
+     * @param int $id
+     * @param int $depth
+     * @param array<int, bool> $objectIds
+     * @return string
+     */
+    public function format(object $var, int $id, int $depth, array $objectIds): string
     {
         $deco = $this->decorator;
         $properties = $this->getProperties($var);
@@ -37,23 +53,18 @@ class ObjectCaster extends Caster
 
         $objectIds[$id] ??= true;
 
-        return $this->formatter->block(
-            "{$summary} {",
-            "}",
-            $depth,
-            function (int $depth) use ($deco, $properties, $objectIds) {
-                $string = '';
-                foreach ($properties as $key => $val) {
-                    $string .= $deco->line(
-                        $deco->parameterKey($key) .
-                        $deco->parameterDelimiter(':') . ' ' .
-                        $this->formatter->format($val, $depth, $objectIds),
-                        $depth,
-                    );
-                }
-                return $string;
-            },
-        );
+        $string = "{$summary} {" . $deco->eol();
+        foreach ($properties as $key => $val) {
+            $string .= $deco->line(
+                $deco->parameterKey($key) .
+                $deco->parameterDelimiter(':') . ' ' .
+                $this->autoFormatter->format($val, $depth + 1, $objectIds),
+                $depth + 1,
+            );
+        }
+        $string .= $deco->indent('}', $depth);
+
+        return $string;
     }
 
     /**

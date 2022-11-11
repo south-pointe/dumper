@@ -30,7 +30,7 @@ class AnsiDecorator implements Decorator
      */
     public function root(string $string): string
     {
-        return $this->eol() . $string . $this->eol();
+        return $string . $this->eol();
     }
 
     /**

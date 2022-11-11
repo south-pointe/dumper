@@ -1,16 +1,16 @@
 <?php declare(strict_types=1);
 
-namespace SouthPointe\DataDump\Casters;
+namespace SouthPointe\DataDump\Formatters;
 
 use UnitEnum;
 
-class EnumCaster extends Caster
+class EnumFormatter extends ClassFormatter
 {
     /**
      * @param UnitEnum $var
      * @inheritDoc
      */
-    public function cast(object $var, int $id, int $depth, array $objectIds): string
+    public function format(object $var, int $id, int $depth, array $objectIds): string
     {
         $deco = $this->decorator;
 

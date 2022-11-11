@@ -65,9 +65,7 @@ class DumpTest extends TestCase
             &$ref,
         ];
 
-        $decorator = new AnsiDecorator();
-        $formatter = new Formatter($decorator);
-        $vd = new Dumper($formatter);
+        $vd = new Dumper();
         $vd->dump($vars);
 
         $vd->dump("a\u{200E}\u{200A}\u{061C}\u{0012}\u{204A}b");

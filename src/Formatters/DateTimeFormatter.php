@@ -1,16 +1,16 @@
 <?php declare(strict_types=1);
 
-namespace SouthPointe\DataDump\Casters;
+namespace SouthPointe\DataDump\Formatters;
 
 use DateTime;
 
-class DateTimeCaster extends Caster
+class DateTimeFormatter extends ClassFormatter
 {
     /**
      * @param DateTime $var
      * @inheritDoc
      */
-    public function cast(object $var, int $id, int $depth, array $objectIds): string
+    public function format(object $var, int $id, int $depth, array $objectIds): string
     {
         $deco = $this->decorator;
 

@@ -1,18 +1,18 @@
 <?php declare(strict_types=1);
 
-namespace SouthPointe\DataDump\Casters;
+namespace SouthPointe\DataDump\Formatters;
 
 use Closure;
 use ReflectionFunction;
 use function assert;
 
-class ClosureCaster extends Caster
+class ClosureFormatter extends ClassFormatter
 {
     /**
      * @param Closure $var
      * @inheritDoc
      */
-    public function cast(object $var, int $id, int $depth, array $objectIds): string
+    public function format(object $var, int $id, int $depth, array $objectIds): string
     {
         assert($var instanceof Closure);
 

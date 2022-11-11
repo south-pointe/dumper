@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace SouthPointe\DataDump\Casters;
+namespace SouthPointe\DataDump\Formatters;
 
 use Throwable;
 use function count;
@@ -9,13 +9,13 @@ use function str_pad;
 use function strlen;
 use const STR_PAD_LEFT;
 
-class ThrowableCaster extends Caster
+class ThrowableFormatter extends ClassFormatter
 {
     /**
      * @param Throwable $var
      * @inheritDoc
      */
-    public function cast(object $var, int $id, int $depth, array $objectIds): string
+    public function format(object $var, int $id, int $depth, array $objectIds): string
     {
         $deco = $this->decorator;
 
@@ -82,10 +82,10 @@ class ThrowableCaster extends Caster
         }
 
         return
-            $deco->line(
+            $deco->indent(
                 $deco->parameterKey('context') .
                 $deco->parameterDelimiter(':') . ' ' .
-                $this->formatter->format(
+                $this->autoFormatter->format(
                     $var->getContext(), $depth, $objectIds
                 ),
                 $depth,
