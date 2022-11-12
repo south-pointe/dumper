@@ -5,6 +5,7 @@ namespace SouthPointe\DataDump\Formatters;
 use ReflectionClass;
 use ReflectionProperty;
 use SouthPointe\DataDump\Decorators\Decorator;
+use SouthPointe\DataDump\Options;
 use function array_key_exists;
 use function count;
 use function method_exists;
@@ -14,10 +15,12 @@ class ClassFormatter
     /**
      * @param AutoFormatter $autoFormatter
      * @param Decorator $decorator
+     * @param Options $options
      */
     public function __construct(
         protected AutoFormatter $autoFormatter,
         protected Decorator $decorator,
+        protected Options $options,
     )
     {
     }

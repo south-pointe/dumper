@@ -18,6 +18,7 @@ class ResourceFormatter
     public function __construct(
         protected AutoFormatter $autoFormatter,
         protected Decorator $decorator,
+        protected Options $options,
     )
     {
     }

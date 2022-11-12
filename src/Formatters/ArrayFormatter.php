@@ -4,18 +4,21 @@ namespace SouthPointe\DataDump\Formatters;
 
 use ReflectionReference;
 use SouthPointe\DataDump\Decorators\Decorator;
+use SouthPointe\DataDump\Options;
 use function array_is_list;
 use function count;
 
 class ArrayFormatter
 {
     /**
-     * @param Decorator $decorator
      * @param AutoFormatter $autoFormatter
+     * @param Decorator $decorator
+     * @param Options $options
      */
     public function __construct(
-        protected Decorator $decorator,
         protected AutoFormatter $autoFormatter,
+        protected Decorator $decorator,
+        protected Options $options,
     )
     {
     }

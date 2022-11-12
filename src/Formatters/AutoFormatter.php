@@ -130,7 +130,7 @@ class AutoFormatter
      */
     protected function formatArray(array $var, int $depth, array $objectIds): string
     {
-        $formatter = $this->arrayFormatter ??= new ArrayFormatter($this->decorator, $this);
+        $formatter = $this->arrayFormatter ??= new ArrayFormatter($this, $this->decorator, $this->options);
         return $formatter->format($var, $depth, $objectIds);
     }
 
@@ -154,7 +154,7 @@ class AutoFormatter
      */
     protected function formatResource(mixed $var, int $depth): string
     {
-        $formatter = $this->resourceFormatter ??= new ResourceFormatter($this, $this->decorator);
+        $formatter = $this->resourceFormatter ??= new ResourceFormatter($this, $this->decorator, $this->options);
         return $formatter->format($var, $depth);
     }
 
@@ -212,10 +212,10 @@ class AutoFormatter
     protected function makeDefaultClassResolvers(): array
     {
         return [
-            Closure::class => fn() => new ClosureFormatter($this, $this->decorator),
-            DateTime::class => fn() => new DateTimeFormatter($this, $this->decorator),
-            Throwable::class => fn() => new ThrowableFormatter($this, $this->decorator),
-            UnitEnum::class => fn() => new EnumFormatter($this, $this->decorator),
+            Closure::class => fn() => new ClosureFormatter($this, $this->decorator, $this->options),
+            DateTime::class => fn() => new DateTimeFormatter($this, $this->decorator, $this->options),
+            Throwable::class => fn() => new ThrowableFormatter($this, $this->decorator, $this->options),
+            UnitEnum::class => fn() => new EnumFormatter($this, $this->decorator, $this->options),
         ];
     }
 
@@ -224,6 +224,6 @@ class AutoFormatter
      */
     protected function makeFallbackClassFormatterResolver(): Closure
     {
-        return fn() => new ClassFormatter($this, $this->decorator);
+        return fn() => new ClassFormatter($this, $this->decorator, $this->options);
     }
 }
