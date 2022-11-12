@@ -61,7 +61,7 @@ class ThrowableFormatter extends ClassFormatter
                 $trace['function'] .
                 (count($trace['args'] ?? []) > 0 ? '(⋯)' : '()');
             $line = $deco->scalar("{$number}: {$file}{$function}");
-            $string.= $deco->line($line, $depth + 1);
+            $string .= $deco->line($line, $depth + 1);
         }
 
         return $string;
@@ -86,7 +86,7 @@ class ThrowableFormatter extends ClassFormatter
                 $deco->parameterKey('context') .
                 $deco->parameterDelimiter(':') . ' ' .
                 $this->autoFormatter->format(
-                    $var->getContext(), $depth, $objectIds
+                    $var->getContext(), $depth, $objectIds,
                 ),
                 $depth,
             );

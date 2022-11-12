@@ -43,13 +43,13 @@ class StringFormatter
         }
 
         // Replace control and space chars with raw string representation.
-        $var = (string) preg_replace_callback_array([
+        $var = (string)preg_replace_callback_array([
             '/[\pC]/u' => fn(array $match) => $this->formatControlChar($match[0]),
             '/[\pZ]/u' => fn(array $match) => $this->formatSpaceChar($match[0]),
         ], $var);
 
         if ($tooLong) {
-            $var.= $deco->comment(' … <truncated>');
+            $var .= $deco->comment(' … <truncated>');
         }
 
         if ($singleLine) {
@@ -62,11 +62,11 @@ class StringFormatter
         $string = $deco->comment('"""') . $deco->eol();
         $parts = [];
         foreach (explode('\n', $var) as $line) {
-            $parts[]= $deco->indent($deco->scalar($line), $depth + 1);
+            $parts[] = $deco->indent($deco->scalar($line), $depth + 1);
         }
-        $string.= implode($deco->escapedString("\\n\n"), $parts);
-        $string.= $deco->eol();
-        $string.= $deco->indent($deco->comment('"""'), $depth + 1);
+        $string .= implode($deco->escapedString("\\n\n"), $parts);
+        $string .= $deco->eol();
+        $string .= $deco->indent($deco->comment('"""'), $depth + 1);
         return $string;
     }
 

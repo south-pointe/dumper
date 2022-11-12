@@ -3,8 +3,6 @@
 namespace Tests\SouthPointe\DataDump;
 
 use DateTime;
-use SouthPointe\DataDump\Decorators\AnsiDecorator;
-use SouthPointe\DataDump\Decorators\NoDecorator;
 use SouthPointe\DataDump\Dumper;
 use SouthPointe\DataDump\Formatter;
 use Tests\SouthPointe\DataDump\Samples\CircularClass;

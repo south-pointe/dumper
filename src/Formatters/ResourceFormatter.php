@@ -50,10 +50,10 @@ class ResourceFormatter
             $decoKey = $deco->parameterKey($key);
             $decoVal = $this->autoFormatter->format($val, $depth + 1);
             $arrow = $deco->parameterDelimiter(':');
-            $string.= $deco->line("{$decoKey}{$arrow} {$decoVal}", $depth + 1);
+            $string .= $deco->line("{$decoKey}{$arrow} {$decoVal}", $depth + 1);
         }
 
-        $string.= $deco->indent('}', $depth);
+        $string .= $deco->indent('}', $depth);
 
         return $string;
     }

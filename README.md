@@ -32,8 +32,6 @@ composer require south-pointe/data-dump
 
 ## Methods
 
-
-
 ## License
 
 This is an open-sourced software licensed under the [MIT License](LICENSE).

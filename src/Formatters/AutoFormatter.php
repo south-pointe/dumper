@@ -33,11 +33,11 @@ class AutoFormatter
      * @param ClassFormatterFactory|null $classFormatterFactory
      */
     public function __construct(
-        protected readonly Decorator     $decorator,
-        protected readonly Options       $options,
-        protected ?StringFormatter       $stringFormatter = null,
-        protected ?ArrayFormatter        $arrayFormatter = null,
-        protected ?ResourceFormatter     $resourceFormatter = null,
+        protected readonly Decorator $decorator,
+        protected readonly Options $options,
+        protected ?StringFormatter $stringFormatter = null,
+        protected ?ArrayFormatter $arrayFormatter = null,
+        protected ?ResourceFormatter $resourceFormatter = null,
         protected ?ClassFormatterFactory $classFormatterFactory = null,
     )
     {
@@ -200,22 +200,30 @@ class AutoFormatter
 
     protected function getClassFormatterFactory(): ClassFormatterFactory
     {
-        if ($this->classFormatterFactory !== null) {
-            return $this->classFormatterFactory;
-        }
+        return $this->classFormatterFactory ??= new ClassFormatterFactory(
+            $this->makeDefaultClassResolvers(),
+            $this->makeFallbackClassFormatterResolver(),
+        );
+    }
 
-        $classResolvers = [
+    /**
+     * @return array<class-string, Closure(): ClassFormatter>
+     */
+    protected function makeDefaultClassResolvers(): array
+    {
+        return [
             Closure::class => fn() => new ClosureFormatter($this, $this->decorator),
             DateTime::class => fn() => new DateTimeFormatter($this, $this->decorator),
             Throwable::class => fn() => new ThrowableFormatter($this, $this->decorator),
             UnitEnum::class => fn() => new EnumFormatter($this, $this->decorator),
         ];
+    }
 
-        $fallbackResolver = fn() => new ClassFormatter($this, $this->decorator);
-
-        return $this->classFormatterFactory = new ClassFormatterFactory(
-            $classResolvers,
-            $fallbackResolver,
-        );
+    /**
+     * @return Closure(): ClassFormatter
+     */
+    protected function makeFallbackClassFormatterResolver(): Closure
+    {
+        return fn() => new ClassFormatter($this, $this->decorator);
     }
 }

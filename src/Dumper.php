@@ -35,7 +35,7 @@ class Dumper
     public function dump(mixed $var): void
     {
         $this->writer->write(
-            $this->autoFormatter->format($var)
+            $this->autoFormatter->format($var),
         );
     }
 
