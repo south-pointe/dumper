@@ -30,7 +30,7 @@ class ArrayFormatter
     {
         $deco = $this->decorator;
 
-        $start = $deco->classType('array(' . count($var) . ')') . ' [';
+        $start = '[';
         $end = ']';
 
         if (count($var) === 0) {
