@@ -30,15 +30,15 @@ class AutoFormatter
      * @param StringFormatter|null $stringFormatter
      * @param ArrayFormatter|null $arrayFormatter
      * @param ResourceFormatter|null $resourceFormatter
-     * @param ClassFormatterRegistry|null $classFormatterRegistry
+     * @param ClassFormatterFactory|null $classFormatterFactory
      */
     public function __construct(
-        protected readonly Decorator $decorator,
-        protected readonly Options $options,
-        protected ?StringFormatter $stringFormatter = null,
-        protected ?ArrayFormatter $arrayFormatter = null,
-        protected ?ResourceFormatter $resourceFormatter = null,
-        protected ?ClassFormatterRegistry $classFormatterRegistry = null,
+        protected readonly Decorator     $decorator,
+        protected readonly Options       $options,
+        protected ?StringFormatter       $stringFormatter = null,
+        protected ?ArrayFormatter        $arrayFormatter = null,
+        protected ?ResourceFormatter     $resourceFormatter = null,
+        protected ?ClassFormatterFactory $classFormatterFactory = null,
     )
     {
     }
@@ -186,7 +186,7 @@ class AutoFormatter
      */
     public function setClassFormatter(string $class, Closure $callback): void
     {
-        $this->getClassFormatterRegistry()->set($class, $callback);
+        $this->getClassFormatterFactory()->set($class, $callback);
     }
 
     /**
@@ -195,13 +195,13 @@ class AutoFormatter
      */
     protected function getClassFormatter(string $class): ClassFormatter
     {
-        return $this->getClassFormatterRegistry()->get($class);
+        return $this->getClassFormatterFactory()->get($class);
     }
 
-    protected function getClassFormatterRegistry(): ClassFormatterRegistry
+    protected function getClassFormatterFactory(): ClassFormatterFactory
     {
-        if ($this->classFormatterRegistry !== null) {
-            return $this->classFormatterRegistry;
+        if ($this->classFormatterFactory !== null) {
+            return $this->classFormatterFactory;
         }
 
         $classResolvers = [
@@ -213,7 +213,7 @@ class AutoFormatter
 
         $fallbackResolver = fn() => new ClassFormatter($this, $this->decorator);
 
-        return $this->classFormatterRegistry = new ClassFormatterRegistry(
+        return $this->classFormatterFactory = new ClassFormatterFactory(
             $classResolvers,
             $fallbackResolver,
         );

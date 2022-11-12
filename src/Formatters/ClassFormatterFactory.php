@@ -6,7 +6,7 @@ use Closure;
 use function array_key_exists;
 use function is_a;
 
-class ClassFormatterRegistry
+class ClassFormatterFactory
 {
     /**
      * @var array<class-string, ClassFormatter>
