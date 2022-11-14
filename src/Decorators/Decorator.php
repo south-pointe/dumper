@@ -2,31 +2,39 @@
 
 namespace SouthPointe\DataDump\Decorators;
 
+use SouthPointe\Ansi\Codes\Color;
+
 interface Decorator
 {
+    /**
+     * @param string $string
+     * @return string
+     */
     public function root(string $string): string;
 
+    /**
+     * @param string $string
+     * @param int $depth
+     * @return string
+     */
     public function indent(string $string, int $depth): string;
 
+    /**
+     * @param string $string
+     * @param int $depth
+     * @return string
+     */
     public function line(string $string, int $depth): string;
 
+    /**
+     * @return string
+     */
     public function eol(): string;
 
-    public function refSymbol(string $string): string;
-
-    public function escapedString(string $string): string;
-
-    public function classType(string $type): string;
-
-    public function resourceType(string $type): string;
-
-    public function scalar(mixed $value): string;
-
-    public function parameterKey(int|string $key): string;
-
-    public function parameterDelimiter(string $delimiter): string;
-
-    public function arrayKey(int|string $key): string;
-
-    public function comment(string $comment): string;
+    /**
+     * @param string $string
+     * @param Color $color
+     * @return string
+     */
+    public function colorize(string $string, Color $color): string;
 }

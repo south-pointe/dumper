@@ -5,27 +5,26 @@ namespace SouthPointe\DataDump;
 use SouthPointe\DataDump\Decorators\AnsiDecorator;
 use SouthPointe\DataDump\Decorators\Decorator;
 use SouthPointe\DataDump\Decorators\NoDecorator;
-use SouthPointe\DataDump\Formatters\AutoFormatter;
 
 class Dumper
 {
     /**
-     * @var AutoFormatter
+     * @var Formatter
      */
-    protected AutoFormatter $autoFormatter;
+    protected Formatter $formatter;
 
     /**
-     * @param AutoFormatter|null $autoFormatter
+     * @param Formatter|null $formatter
      * @param Writer $writer
      * @param Options $options
      */
     public function __construct(
-        ?AutoFormatter $autoFormatter = null,
+        ?Formatter $formatter = null,
         protected Writer $writer = new Writer(),
         protected Options $options = new Options(),
     )
     {
-        $this->autoFormatter = $autoFormatter ?? $this->makeAutoFormatter();
+        $this->formatter = $formatter ?? $this->makeFormatter();
     }
 
     /**
@@ -35,16 +34,16 @@ class Dumper
     public function dump(mixed $var): void
     {
         $this->writer->write(
-            $this->autoFormatter->format($var),
+            $this->formatter->format($var),
         );
     }
 
     /**
-     * @return AutoFormatter
+     * @return Formatter
      */
-    protected function makeAutoFormatter(): AutoFormatter
+    protected function makeFormatter(): Formatter
     {
-        return new AutoFormatter(
+        return new Formatter(
             $this->makeDefaultDecorator(),
             $this->options,
         );

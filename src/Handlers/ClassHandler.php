@@ -1,30 +1,18 @@
 <?php declare(strict_types=1);
 
-namespace SouthPointe\DataDump\Formatters;
+namespace SouthPointe\DataDump\Handlers;
 
 use ReflectionClass;
 use ReflectionProperty;
+use SouthPointe\Ansi\Codes\Color;
 use SouthPointe\DataDump\Decorators\Decorator;
 use SouthPointe\DataDump\Options;
 use function array_key_exists;
 use function count;
 use function method_exists;
 
-class ClassFormatter
+class ClassHandler extends Handler
 {
-    /**
-     * @param AutoFormatter $autoFormatter
-     * @param Decorator $decorator
-     * @param Options $options
-     */
-    public function __construct(
-        protected AutoFormatter $autoFormatter,
-        protected Decorator $decorator,
-        protected Options $options,
-    )
-    {
-    }
-
     /**
      * @param object $var
      * @param int $id
@@ -32,14 +20,13 @@ class ClassFormatter
      * @param array<int, bool> $objectIds
      * @return string
      */
-    public function format(object $var, int $id, int $depth, array $objectIds): string
+    public function handle(object $var, int $id, int $depth, array $objectIds): string
     {
-        $deco = $this->decorator;
         $properties = $this->getProperties($var);
 
         $summary =
-            $deco->classType($var::class) . ' ' .
-            $deco->comment("#{$id}");
+            $this->colorizeName($var::class) . ' ' .
+            $this->colorizeComment("#{$id}");
 
         if (count($properties) === 0) {
             return $summary;
@@ -48,24 +35,24 @@ class ClassFormatter
         if (array_key_exists($id, $objectIds)) {
             return
                 $summary . ' ' .
-                $deco->comment('<circular>') . ' ' .
+                $this->colorizeComment('<circular>') . ' ' .
                 '{ ' .
-                $deco->comment('⋯') .
+                $this->colorizeComment('⋯') .
                 ' }';
         }
 
         $objectIds[$id] ??= true;
 
-        $string = "{$summary} {" . $deco->eol();
+        $string = "{$summary} {" . $this->eol();
         foreach ($properties as $key => $val) {
-            $string .= $deco->line(
-                $deco->parameterKey($key) .
-                $deco->parameterDelimiter(':') . ' ' .
-                $this->autoFormatter->format($val, $depth + 1, $objectIds),
+            $string .= $this->line(
+                $this->colorizeKey($key) .
+                $this->colorizeDelimiter(':') . ' ' .
+                $this->formatter->format($val, $depth + 1, $objectIds),
                 $depth + 1,
             );
         }
-        $string .= $deco->indent('}', $depth);
+        $string .= $this->indent('}', $depth);
 
         return $string;
     }
@@ -80,14 +67,13 @@ class ClassFormatter
             return $var->__debugInfo();
         }
 
-        $reflections = (new ReflectionClass($var))->getProperties(
-            ReflectionProperty::IS_STATIC |
-            ReflectionProperty::IS_PUBLIC |
-            ReflectionProperty::IS_PROTECTED |
-            ReflectionProperty::IS_PRIVATE,
+        $classReflection = new ReflectionClass($var);
+        $propertyReflections = $classReflection->getProperties(
+            $this->options->classPropertyFilter,
         );
+
         $properties = [];
-        foreach ($reflections as $reflection) {
+        foreach ($propertyReflections as $reflection) {
             $access = ($reflection->getModifiers() & ReflectionProperty::IS_STATIC)
                 ? 'static '
                 : '';
@@ -96,5 +82,14 @@ class ClassFormatter
             $properties[$name] = $value;
         }
         return $properties;
+    }
+
+    /**
+     * @param string $name
+     * @return string
+     */
+    protected function colorizeName(string $name): string
+    {
+        return $this->colorize($name, Color::DarkCyan);
     }
 }

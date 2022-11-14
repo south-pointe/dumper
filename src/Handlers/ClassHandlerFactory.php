@@ -1,26 +1,26 @@
 <?php declare(strict_types=1);
 
-namespace SouthPointe\DataDump\Formatters;
+namespace SouthPointe\DataDump\Handlers;
 
 use Closure;
 use function array_key_exists;
 use function is_a;
 
-class ClassFormatterFactory
+class ClassHandlerFactory
 {
     /**
-     * @var array<class-string, ClassFormatter>
+     * @var array<class-string, ClassHandler>
      */
     protected array $resolved = [];
 
     /**
-     * @var ClassFormatter|null
+     * @var ClassHandler|null
      */
-    protected ?ClassFormatter $fallback = null;
+    protected ?ClassHandler $fallback = null;
 
     /**
-     * @param array<class-string, Closure(): ClassFormatter> $resolvers
-     * @param Closure(): ClassFormatter $fallbackResolver
+     * @param array<class-string, Closure(): ClassHandler> $resolvers
+     * @param Closure(): ClassHandler $fallbackResolver
      */
     public function __construct(
         protected array $resolvers,
@@ -31,7 +31,7 @@ class ClassFormatterFactory
 
     /**
      * @param class-string $class
-     * @param Closure(): ClassFormatter $callback
+     * @param Closure(): ClassHandler $callback
      * @return void
      */
     public function set(string $class, Closure $callback): void
@@ -41,11 +41,11 @@ class ClassFormatterFactory
 
     /**
      * @param class-string $class
-     * @return ClassFormatter
+     * @return ClassHandler
      */
-    public function get(string $class): ClassFormatter
+    public function get(string $class): ClassHandler
     {
-        // Check if class already exists in resolved formatters.
+        // Check if class already exists in resolved handlers.
         if (array_key_exists($class, $this->resolved)) {
             return $this->resolved[$class];
         }

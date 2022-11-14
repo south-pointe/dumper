@@ -1,22 +1,20 @@
 <?php declare(strict_types=1);
 
-namespace SouthPointe\DataDump\Formatters;
+namespace SouthPointe\DataDump\Handlers;
 
 use Closure;
 use ReflectionFunction;
 use function assert;
 
-class ClosureFormatter extends ClassFormatter
+class ClosureHandler extends ClassHandler
 {
     /**
      * @param Closure $var
      * @inheritDoc
      */
-    public function format(object $var, int $id, int $depth, array $objectIds): string
+    public function handle(object $var, int $id, int $depth, array $objectIds): string
     {
         assert($var instanceof Closure);
-
-        $deco = $this->decorator;
 
         $ref = new ReflectionFunction($var);
 
@@ -27,18 +25,18 @@ class ClosureFormatter extends ClassFormatter
                 ? "{$startLine}-{$endLine}"
                 : $startLine;
             return
-                $deco->classType($var::class . "@{$file}:{$range}") . ' ' .
-                $deco->comment("#{$id}");
+                $this->colorizeName($var::class . "@{$file}:{$range}") . ' ' .
+                $this->colorizeComment("#{$id}");
         }
 
         if ($class = $ref->getClosureScopeClass()) {
             return
-                $deco->classType("{$class->getName()}::{$ref->getName()}(...)") . ' ' .
-                $deco->comment("#{$id}");
+                $this->colorizeName("{$class->getName()}::{$ref->getName()}(...)") . ' ' .
+                $this->colorizeComment("#{$id}");
         }
 
         return
-            $deco->classType("{$ref->getName()}(...)") . ' ' .
-            $deco->comment("#{$id}");
+            $this->colorizeName("{$ref->getName()}(...)") . ' ' .
+            $this->colorizeComment("#{$id}");
     }
 }
