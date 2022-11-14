@@ -15,7 +15,7 @@ class Options
 
     /**
      * @param int $maxStringLength
-     * @param string $indentSize
+     * @param int $indentSize
      * @param string $decorator
      * @param int $classPropertyFilter
      */
