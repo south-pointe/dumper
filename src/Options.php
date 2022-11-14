@@ -13,9 +13,15 @@ class Options
         ReflectionProperty::IS_PROTECTED |
         ReflectionProperty::IS_PRIVATE;
 
+    /**
+     * @param int $maxStringLength
+     * @param string $indentSize
+     * @param string $decorator
+     * @param int $classPropertyFilter
+     */
     public function __construct(
+        public readonly int $indentSize = 2,
         public readonly int $maxStringLength = 5000,
-        public readonly string $indentation = '  ',
         public readonly string $decorator = PHP_SAPI,
         public readonly int $classPropertyFilter = self::CLASS_PROPERTY_FILTER_DEFAULT,
     )

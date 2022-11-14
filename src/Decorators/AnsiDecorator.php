@@ -5,6 +5,7 @@ namespace SouthPointe\DataDump\Decorators;
 use SouthPointe\Ansi\Ansi;
 use SouthPointe\Ansi\Codes\Color;
 use SouthPointe\DataDump\Options;
+use function str_repeat;
 use const PHP_EOL;
 
 class AnsiDecorator implements Decorator
@@ -39,7 +40,7 @@ class AnsiDecorator implements Decorator
      */
     public function indent(string $string, int $depth): string
     {
-        return str_repeat($this->options->indentation, $depth) . $string;
+        return str_repeat(' ', $depth * $this->options->indentSize) . $string;
     }
 
     /**
