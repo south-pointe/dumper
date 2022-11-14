@@ -15,6 +15,6 @@ class DateTimeHandler extends ClassHandler
         return
             $this->colorizeName($var::class) . ' ' .
             $this->colorizeComment("#$id") . ' ' .
-            $this->colorizeScalar($var->format('Y-m-d H:i:s.u T (P)'));
+            $this->colorizeScalar($var->format($this->config->dateTimeFormat));
     }
 }

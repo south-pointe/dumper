@@ -29,7 +29,7 @@ class Formatter
 {
     /**
      * @param Decorator $decorator
-     * @param Options $options
+     * @param Config $config
      * @param NullHandler|null $nullHandler
      * @param ScalarHandler|null $scalarHandler
      * @param ArrayHandler|null $arrayHandler
@@ -38,7 +38,7 @@ class Formatter
      */
     public function __construct(
         protected Decorator $decorator,
-        protected Options $options,
+        protected Config $config,
         protected ?NullHandler $nullHandler = null,
         protected ?ScalarHandler $scalarHandler = null,
         protected ?ArrayHandler $arrayHandler = null,
@@ -75,7 +75,7 @@ class Formatter
      */
     protected function formatNull(): string
     {
-        $handler = $this->nullHandler ??= new NullHandler($this, $this->decorator, $this->options);
+        $handler = $this->nullHandler ??= new NullHandler($this, $this->decorator, $this->config);
         return $handler->handle(null);
     }
 
@@ -86,7 +86,7 @@ class Formatter
      */
     protected function formatScalar(bool|int|float|string $var, int $depth): string
     {
-        $handler = $this->scalarHandler ??= new ScalarHandler($this, $this->decorator, $this->options);
+        $handler = $this->scalarHandler ??= new ScalarHandler($this, $this->decorator, $this->config);
         return $handler->handle($var, $depth);
     }
 
@@ -98,7 +98,7 @@ class Formatter
      */
     protected function formatArray(array $var, int $depth, array $objectIds): string
     {
-        $handler = $this->arrayHandler ??= new ArrayHandler($this, $this->decorator, $this->options);
+        $handler = $this->arrayHandler ??= new ArrayHandler($this, $this->decorator, $this->config);
         return $handler->handle($var, $depth, $objectIds);
     }
 
@@ -121,7 +121,7 @@ class Formatter
      */
     protected function formatResource(mixed $var, int $depth): string
     {
-        $handler = $this->resourceHandler ??= new ResourceHandler($this, $this->decorator, $this->options);
+        $handler = $this->resourceHandler ??= new ResourceHandler($this, $this->decorator, $this->config);
         return $handler->handle($var, $depth);
     }
 
@@ -179,10 +179,10 @@ class Formatter
     protected function makeDefaultClassResolvers(): array
     {
         return [
-            Closure::class => fn() => new ClosureHandler($this, $this->decorator, $this->options),
-            DateTime::class => fn() => new DateTimeHandler($this, $this->decorator, $this->options),
-            Throwable::class => fn() => new ThrowableHandler($this, $this->decorator, $this->options),
-            UnitEnum::class => fn() => new EnumHandler($this, $this->decorator, $this->options),
+            Closure::class => fn() => new ClosureHandler($this, $this->decorator, $this->config),
+            DateTime::class => fn() => new DateTimeHandler($this, $this->decorator, $this->config),
+            Throwable::class => fn() => new ThrowableHandler($this, $this->decorator, $this->config),
+            UnitEnum::class => fn() => new EnumHandler($this, $this->decorator, $this->config),
         ];
     }
 
@@ -191,6 +191,6 @@ class Formatter
      */
     protected function makeFallbackClassHandlerResolver(): Closure
     {
-        return fn() => new ClassHandler($this, $this->decorator, $this->options);
+        return fn() => new ClassHandler($this, $this->decorator, $this->config);
     }
 }

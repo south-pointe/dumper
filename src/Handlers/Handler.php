@@ -5,7 +5,7 @@ namespace SouthPointe\DataDump\Handlers;
 use SouthPointe\Ansi\Codes\Color;
 use SouthPointe\DataDump\Decorators\Decorator;
 use SouthPointe\DataDump\Formatter;
-use SouthPointe\DataDump\Options;
+use SouthPointe\DataDump\Config;
 use function is_int;
 
 abstract class Handler
@@ -18,12 +18,12 @@ abstract class Handler
     /**
      * @param Formatter $formatter
      * @param Decorator $decorator
-     * @param Options $options
+     * @param Config $config
      */
     public function __construct(
         protected Formatter $formatter,
         protected readonly Decorator $decorator,
-        protected readonly Options $options,
+        protected readonly Config $config,
     )
     {
     }

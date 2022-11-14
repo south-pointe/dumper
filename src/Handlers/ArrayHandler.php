@@ -5,7 +5,7 @@ namespace SouthPointe\DataDump\Handlers;
 use ReflectionReference;
 use SouthPointe\Ansi\Codes\Color;
 use SouthPointe\DataDump\Decorators\Decorator;
-use SouthPointe\DataDump\Options;
+use SouthPointe\DataDump\Config;
 use function array_is_list;
 use function count;
 

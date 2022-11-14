@@ -79,12 +79,12 @@ class ScalarHandler extends Handler
     protected function handleString(string $var, int $depth): string
     {
         $singleLine = !str_contains($var, "\n");
-        $tooLong = mb_strlen($var) > $this->options->maxStringLength;
+        $tooLong = mb_strlen($var) > $this->config->maxStringLength;
 
         // Trim the string if too long
         // Ellipsis will be added after control and space replacement.
         if ($tooLong) {
-            $var = mb_strcut($var, 0, $this->options->maxStringLength);
+            $var = mb_strcut($var, 0, $this->config->maxStringLength);
         }
 
         // Replace control and space chars with raw string representation.

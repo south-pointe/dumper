@@ -2,12 +2,14 @@
 
 namespace SouthPointe\DataDump\Handlers;
 
+use LogicException;
 use ReflectionClass;
 use ReflectionProperty;
 use SouthPointe\Ansi\Codes\Color;
 use SouthPointe\DataDump\Decorators\Decorator;
-use SouthPointe\DataDump\Options;
+use SouthPointe\DataDump\Config;
 use function array_key_exists;
+use function array_merge;
 use function count;
 use function method_exists;
 
@@ -63,13 +65,18 @@ class ClassHandler extends Handler
      */
     protected function getProperties(object $var): array
     {
-        if (method_exists($var, '__debugInfo')) {
-            return $var->__debugInfo();
+        $debugInfoOption = $this->config->debugInfo;
+
+        if ($debugInfoOption === Config::DEBUG_INFO_OVERWRITE) {
+            $debugInfo = $this->getDebugInfo($var);
+            if ($debugInfo !== null) {
+                return $debugInfo;
+            }
         }
 
         $classReflection = new ReflectionClass($var);
         $propertyReflections = $classReflection->getProperties(
-            $this->options->classPropertyFilter,
+            $this->config->classPropertyFilter,
         );
 
         $properties = [];
@@ -81,7 +88,28 @@ class ClassHandler extends Handler
             $value = $reflection->getValue($var);
             $properties[$name] = $value;
         }
+
+        if ($debugInfoOption === Config::DEBUG_INFO_APPEND) {
+            $debugInfo = $this->getDebugInfo($var);
+            if ($debugInfo !== null) {
+                $properties = array_merge($debugInfo, $properties);
+            }
+        }
+
         return $properties;
+    }
+
+    /**
+     * @param object $var
+     * @return array<string, mixed>|null
+     */
+    protected function getDebugInfo(object $var): ?array
+    {
+        if (!method_exists($var, '__debugInfo')) {
+            return null;
+        }
+
+        return $var->__debugInfo();
     }
 
     /**

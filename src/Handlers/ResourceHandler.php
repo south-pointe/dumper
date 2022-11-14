@@ -4,7 +4,7 @@ namespace SouthPointe\DataDump\Handlers;
 
 use SouthPointe\Ansi\Codes\Color;
 use SouthPointe\DataDump\Decorators\Decorator;
-use SouthPointe\DataDump\Options;
+use SouthPointe\DataDump\Config;
 use function get_resource_id;
 use function get_resource_type;
 use function stream_get_meta_data;

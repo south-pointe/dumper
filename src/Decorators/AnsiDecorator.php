@@ -4,17 +4,17 @@ namespace SouthPointe\DataDump\Decorators;
 
 use SouthPointe\Ansi\Ansi;
 use SouthPointe\Ansi\Codes\Color;
-use SouthPointe\DataDump\Options;
+use SouthPointe\DataDump\Config;
 use function str_repeat;
 use const PHP_EOL;
 
 class AnsiDecorator implements Decorator
 {
     /**
-     * @param Options $options
+     * @param Config $config
      */
     public function __construct(
-        protected Options $options,
+        protected Config $config,
     )
     {
     }
@@ -40,7 +40,7 @@ class AnsiDecorator implements Decorator
      */
     public function indent(string $string, int $depth): string
     {
-        return str_repeat(' ', $depth * $this->options->indentSize) . $string;
+        return str_repeat(' ', $depth * $this->config->indentSize) . $string;
     }
 
     /**

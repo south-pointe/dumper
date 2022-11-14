@@ -16,12 +16,12 @@ class Dumper
     /**
      * @param Formatter|null $formatter
      * @param Writer $writer
-     * @param Options $options
+     * @param Config $config
      */
     public function __construct(
         ?Formatter $formatter = null,
         protected Writer $writer = new Writer(),
-        protected Options $options = new Options(),
+        protected Config $config = new Config(),
     )
     {
         $this->formatter = $formatter ?? $this->makeFormatter();
@@ -45,7 +45,7 @@ class Dumper
     {
         return new Formatter(
             $this->makeDefaultDecorator(),
-            $this->options,
+            $this->config,
         );
     }
 
@@ -54,9 +54,9 @@ class Dumper
      */
     protected function makeDefaultDecorator(): Decorator
     {
-        return match ($this->options->decorator) {
-            'cli' => new AnsiDecorator($this->options),
-            default => new NoDecorator($this->options),
+        return match ($this->config->decorator) {
+            'cli' => new AnsiDecorator($this->config),
+            default => new NoDecorator($this->config),
         };
     }
 }
