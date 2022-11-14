@@ -23,7 +23,7 @@ class Config
      * @param string $decorator
      * @param string $dateTimeFormat
      * @param int $classPropertyFilter
-     * @param int $debugInfo
+     * @param int<0, 2> $debugInfo
      */
     public function __construct(
         public readonly int $indentSize = 2,
