@@ -12,17 +12,16 @@
   "require-dev": {
     "ext-posix": "*",
     "phpstan/phpstan": "^1.8",
-    "phpunit/phpunit": "~9.0",
-    "symfony/var-dumper": "^6"
+    "phpunit/phpunit": "~9.0"
   },
   "autoload": {
     "psr-4": {
-      "SouthPointe\\DataDump\\": "src/"
+      "SouthPointe\\Dumper\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Tests\\SouthPointe\\DataDump\\": "tests/src/"
+      "Tests\\SouthPointe\\Dumper\\": "tests/src/"
     }
   },
   "config": {

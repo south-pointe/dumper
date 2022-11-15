@@ -1,16 +1,15 @@
 <?php declare(strict_types=1);
 
-namespace Tests\SouthPointe\DataDump;
+namespace Tests\SouthPointe\Dumper;
 
 use DateTime;
-use SouthPointe\DataDump\Dumper;
-use SouthPointe\DataDump\Formatter;
-use Tests\SouthPointe\DataDump\Samples\CircularClass;
-use Tests\SouthPointe\DataDump\Samples\ContextualException;
-use Tests\SouthPointe\DataDump\Samples\DebuggableClass;
-use Tests\SouthPointe\DataDump\Samples\SimpleBackedEnum;
-use Tests\SouthPointe\DataDump\Samples\SimpleClass;
-use Tests\SouthPointe\DataDump\Samples\SimpleEnum;
+use SouthPointe\Dumper\Dumper;
+use Tests\SouthPointe\Dumper\Samples\CircularClass;
+use Tests\SouthPointe\Dumper\Samples\ContextualException;
+use Tests\SouthPointe\Dumper\Samples\DebuggableClass;
+use Tests\SouthPointe\Dumper\Samples\SimpleBackedEnum;
+use Tests\SouthPointe\Dumper\Samples\SimpleClass;
+use Tests\SouthPointe\Dumper\Samples\SimpleEnum;
 use function assert;
 use function fclose;
 use function tmpfile;

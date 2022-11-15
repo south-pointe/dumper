@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace SouthPointe\DataDump\Handlers;
+namespace SouthPointe\Dumper\Handlers;
 
 use SouthPointe\Ansi\Codes\Color;
-use SouthPointe\DataDump\Decorators\Decorator;
-use SouthPointe\DataDump\Formatter;
-use SouthPointe\DataDump\Config;
+use SouthPointe\Dumper\Config;
+use SouthPointe\Dumper\Decorators\Decorator;
+use SouthPointe\Dumper\Formatter;
 use function is_int;
 
 abstract class Handler

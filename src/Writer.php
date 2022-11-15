@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace SouthPointe\DataDump;
+namespace SouthPointe\Dumper;
 
 use function assert;
 use function fopen;

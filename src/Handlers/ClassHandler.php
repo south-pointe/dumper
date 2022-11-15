@@ -1,13 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace SouthPointe\DataDump\Handlers;
+namespace SouthPointe\Dumper\Handlers;
 
-use LogicException;
 use ReflectionClass;
 use ReflectionProperty;
 use SouthPointe\Ansi\Codes\Color;
-use SouthPointe\DataDump\Decorators\Decorator;
-use SouthPointe\DataDump\Config;
+use SouthPointe\Dumper\Configs\DebugInfo;
 use function array_key_exists;
 use function array_merge;
 use function count;
@@ -67,7 +65,7 @@ class ClassHandler extends Handler
     {
         $debugInfoOption = $this->config->debugInfo;
 
-        if ($debugInfoOption === Config::DEBUG_INFO_OVERWRITE) {
+        if ($debugInfoOption === DebugInfo::Overwrite) {
             $debugInfo = $this->getDebugInfo($var);
             if ($debugInfo !== null) {
                 return $debugInfo;
@@ -76,7 +74,7 @@ class ClassHandler extends Handler
 
         $classReflection = new ReflectionClass($var);
         $propertyReflections = $classReflection->getProperties(
-            $this->config->classPropertyFilter,
+            $this->config->propertyFilter,
         );
 
         $properties = [];
@@ -89,7 +87,7 @@ class ClassHandler extends Handler
             $properties[$name] = $value;
         }
 
-        if ($debugInfoOption === Config::DEBUG_INFO_APPEND) {
+        if ($debugInfoOption === DebugInfo::Append) {
             $debugInfo = $this->getDebugInfo($var);
             if ($debugInfo !== null) {
                 $properties = array_merge($debugInfo, $properties);

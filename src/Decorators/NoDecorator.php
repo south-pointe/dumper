@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace SouthPointe\DataDump\Decorators;
+namespace SouthPointe\Dumper\Decorators;
 
 use SouthPointe\Ansi\Codes\Color;
-use SouthPointe\DataDump\Config;
+use SouthPointe\Dumper\Config;
 use function str_repeat;
 use const PHP_EOL;
 

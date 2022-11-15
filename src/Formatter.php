@@ -1,20 +1,20 @@
 <?php declare(strict_types=1);
 
-namespace SouthPointe\DataDump;
+namespace SouthPointe\Dumper;
 
 use Closure;
 use DateTime;
-use SouthPointe\DataDump\Decorators\Decorator;
-use SouthPointe\DataDump\Handlers\ArrayHandler;
-use SouthPointe\DataDump\Handlers\ClassHandler;
-use SouthPointe\DataDump\Handlers\ClassHandlerFactory;
-use SouthPointe\DataDump\Handlers\ClosureHandler;
-use SouthPointe\DataDump\Handlers\DateTimeHandler;
-use SouthPointe\DataDump\Handlers\EnumHandler;
-use SouthPointe\DataDump\Handlers\NullHandler;
-use SouthPointe\DataDump\Handlers\ResourceHandler;
-use SouthPointe\DataDump\Handlers\ScalarHandler;
-use SouthPointe\DataDump\Handlers\ThrowableHandler;
+use SouthPointe\Dumper\Decorators\Decorator;
+use SouthPointe\Dumper\Handlers\ArrayHandler;
+use SouthPointe\Dumper\Handlers\ClassHandler;
+use SouthPointe\Dumper\Handlers\ClassHandlerFactory;
+use SouthPointe\Dumper\Handlers\ClosureHandler;
+use SouthPointe\Dumper\Handlers\DateTimeHandler;
+use SouthPointe\Dumper\Handlers\EnumHandler;
+use SouthPointe\Dumper\Handlers\NullHandler;
+use SouthPointe\Dumper\Handlers\ResourceHandler;
+use SouthPointe\Dumper\Handlers\ScalarHandler;
+use SouthPointe\Dumper\Handlers\ThrowableHandler;
 use Throwable;
 use UnitEnum;
 use function get_debug_type;

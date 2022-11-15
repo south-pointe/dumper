@@ -1,11 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace SouthPointe\DataDump\Handlers;
+namespace SouthPointe\Dumper\Handlers;
 
 use ReflectionReference;
 use SouthPointe\Ansi\Codes\Color;
-use SouthPointe\DataDump\Decorators\Decorator;
-use SouthPointe\DataDump\Config;
 use function array_is_list;
 use function count;
 

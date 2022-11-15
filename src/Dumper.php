@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace SouthPointe\DataDump;
+namespace SouthPointe\Dumper;
 
-use SouthPointe\DataDump\Decorators\AnsiDecorator;
-use SouthPointe\DataDump\Decorators\Decorator;
-use SouthPointe\DataDump\Decorators\NoDecorator;
+use SouthPointe\Dumper\Decorators\AnsiDecorator;
+use SouthPointe\Dumper\Decorators\Decorator;
+use SouthPointe\Dumper\Decorators\NoDecorator;
 
 class Dumper
 {

@@ -1,10 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace SouthPointe\DataDump\Handlers;
+namespace SouthPointe\Dumper\Handlers;
 
 use SouthPointe\Ansi\Codes\Color;
-use SouthPointe\DataDump\Decorators\Decorator;
-use SouthPointe\DataDump\Config;
 use function get_resource_id;
 use function get_resource_type;
 use function stream_get_meta_data;

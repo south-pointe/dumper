@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Tests\SouthPointe\DataDump;
+namespace Tests\SouthPointe\Dumper;
 
 use PHPUnit\Framework\TestCase as BaseTestCase;
 
