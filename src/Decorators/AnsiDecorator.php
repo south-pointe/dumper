@@ -56,7 +56,7 @@ class AnsiDecorator implements Decorator
      */
     public function colorStart(Color $color): string
     {
-        return Ansi::foregroundColor($color);
+        return Ansi::fgColor($color);
     }
 
     /**
