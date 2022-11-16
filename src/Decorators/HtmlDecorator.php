@@ -109,8 +109,8 @@ class HtmlDecorator implements Decorator
         }
 
         if ($code >= 232) {
-            $num = ($code - 232) * 10 + 8;
-            return [$num, $num, $num];
+            $n = ($code - 232) * 10 + 8;
+            return [$n, $n, $n];
         }
 
         return [
