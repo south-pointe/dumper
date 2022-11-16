@@ -32,9 +32,13 @@ interface Decorator
     public function eol(): string;
 
     /**
-     * @param string $string
      * @param Color $color
      * @return string
      */
-    public function colorize(string $string, Color $color): string;
+    public function colorStart(Color $color): string;
+
+    /**
+     * @return string
+     */
+    public function colorEnd(): string;
 }

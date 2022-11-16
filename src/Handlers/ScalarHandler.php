@@ -162,10 +162,13 @@ class ScalarHandler extends Handler
      */
     protected function colorizeEscaped(string $string): string
     {
-        return Ansi::buffer()
-            ->foreground(Color::DarkOrange3_A)
-            ->text($string)
-            ->foreground($this->scalarColor)
-            ->toString();
+        $deco = $this->decorator;
+
+        return
+            $deco->colorEnd() .
+            $deco->colorStart(Color::DarkOrange3_B) .
+            $string .
+            $deco->colorEnd() .
+            $deco->colorStart($this->scalarColor);
     }
 }

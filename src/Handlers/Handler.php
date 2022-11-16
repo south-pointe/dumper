@@ -91,7 +91,7 @@ abstract class Handler
      */
     protected function colorizeDelimiter(string $delimiter): string
     {
-        return $this->colorize($delimiter, Color::Gray30);
+        return $this->colorize($delimiter, Color::Gray35);
     }
 
     /**
@@ -101,6 +101,9 @@ abstract class Handler
      */
     protected function colorize(string $value, Color $color): string
     {
-        return $this->decorator->colorize($value, $color);
+        return
+            $this->decorator->colorStart($color) .
+            $value .
+            $this->decorator->colorEnd();
     }
 }

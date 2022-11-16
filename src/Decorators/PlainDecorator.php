@@ -7,7 +7,7 @@ use SouthPointe\Dumper\Config;
 use function str_repeat;
 use const PHP_EOL;
 
-class NoDecorator implements Decorator
+class PlainDecorator implements Decorator
 {
     /**
      * @param Config $config
@@ -53,8 +53,16 @@ class NoDecorator implements Decorator
     /**
      * @inheritDoc
      */
-    public function colorize(string $string, Color $color): string
+    public function colorStart(Color $color): string
     {
-        return $string;
+        return '';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function colorEnd(): string
+    {
+        return '';
     }
 }

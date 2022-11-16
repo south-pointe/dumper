@@ -54,12 +54,16 @@ class AnsiDecorator implements Decorator
     /**
      * @inheritDoc
      */
-    public function colorize(string $string, Color $color): string
+    public function colorStart(Color $color): string
     {
-        return Ansi::buffer()
-            ->foreground($color)
-            ->text($string)
-            ->resetStyle()
-            ->toString();
+        return Ansi::foregroundColor($color);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function colorEnd(): string
+    {
+        return Ansi::resetStyle();
     }
 }

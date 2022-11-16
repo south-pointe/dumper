@@ -4,7 +4,8 @@ namespace SouthPointe\Dumper;
 
 use SouthPointe\Dumper\Decorators\AnsiDecorator;
 use SouthPointe\Dumper\Decorators\Decorator;
-use SouthPointe\Dumper\Decorators\NoDecorator;
+use SouthPointe\Dumper\Decorators\HtmlDecorator;
+use SouthPointe\Dumper\Decorators\PlainDecorator;
 
 class Dumper
 {
@@ -56,7 +57,8 @@ class Dumper
     {
         return match ($this->config->decorator) {
             'cli' => new AnsiDecorator($this->config),
-            default => new NoDecorator($this->config),
+            'html' => new HtmlDecorator($this->config),
+            default => new PlainDecorator($this->config),
         };
     }
 }

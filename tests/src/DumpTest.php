@@ -3,7 +3,10 @@
 namespace Tests\SouthPointe\Dumper;
 
 use DateTime;
+use SouthPointe\Ansi\Ansi;
+use SouthPointe\Dumper\Config;
 use SouthPointe\Dumper\Dumper;
+use SouthPointe\Dumper\Writer;
 use Tests\SouthPointe\Dumper\Samples\CircularClass;
 use Tests\SouthPointe\Dumper\Samples\ContextualException;
 use Tests\SouthPointe\Dumper\Samples\DebuggableClass;
@@ -12,9 +15,13 @@ use Tests\SouthPointe\Dumper\Samples\SimpleClass;
 use Tests\SouthPointe\Dumper\Samples\SimpleEnum;
 use function assert;
 use function fclose;
+use function fopen;
+use function fwrite;
+use function is_resource;
 use function tmpfile;
 use const INF;
 use const NAN;
+use const PHP_EOL;
 use const STDIN;
 
 class DumpTest extends TestCase
@@ -66,5 +73,22 @@ class DumpTest extends TestCase
         $vd->dump($vars);
 
         $vd->dump("a\u{200E}\u{200A}\u{061C}\u{0012}\u{204A}b");
+
+        $resource = fopen('./test.html', 'w+');
+        assert(is_resource($resource));
+        fwrite($resource, '<html lang="ja"><meta charset="UTF-8"><body>');
+
+        $code = 15;
+        $r = (($code - 16) / 36) * 51;
+        $g = ((($code - 16) % 36) / 6) * 51;
+        $b = (($code - 16) % 6) * 51;
+
+        $vd = new Dumper(
+            writer: new Writer($resource),
+            config: new Config(decorator: 'html')
+        );
+        $vd->dump($vars);
+
+        fwrite($resource, '</body></html>');
     }
 }
