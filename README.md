@@ -1,4 +1,4 @@
-# Data dump library for PHP
+# Data dumper library for PHP
 
 ![Test](https://github.com/south-pointe/var-dump/actions/workflows/test.yml/badge.svg)
 [![codecov](https://codecov.io/gh/south-pointe/var-dump/branch/main/graph/badge.svg?token=1PV8FB4O4O)](https://codecov.io/gh/south-pointe/ansi)
@@ -21,7 +21,7 @@ The list below are some things you can do with this library.
 ## Installation
 
 ```
-composer require south-pointe/data-dump
+composer require south-pointe/dumper
 ```
 
 ## Example
