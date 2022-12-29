@@ -1,10 +1,10 @@
 {
   "name": "south-pointe/dumper",
-  "description": "An data dumper for PHP",
+  "description": "Data dumper for PHP",
   "type": "library",
   "license": "MIT",
   "require": {
-    "php": ">= 8.1",
+    "php": ">= 8.2",
     "ext-mbstring": "*",
     "south-pointe/ansi": "dev-main",
     "webmozart/assert": "^1.1"
